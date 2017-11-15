@@ -19,7 +19,6 @@ int compare_meta_offset(void const *a, void const *b) ;
 int sort_by_folder_name_and_file_name(void const *a, void const *b);
 typedef enum {RED,GREEN,YELLOW} Color;
 long countPatchedFiles();
-long locateHash(long hash,MemFileInt* metaFileInMemory,MetaFileInfo* metaFileInfo);
 char* concatenate (char* str1, char*str2); // Merges 2 strings into 1
 char* endian_convert(int num);
 int hexToInt(char* hex);
@@ -27,17 +26,14 @@ char* intToHex(int x);
 void printColor(char* stringToPrint, Color COLOR);
 void addToStringArray(char* fileNameToAdd, char*** ref_stringArray, int* ref_arrraySize);
 int alreadyInStringArray(char* fileName,char** stringArray, int arrraySize);
-long locateIntInMemory(int intToLocate,MemFileInt* arrayInMemory, MetaFileInfo* metaInfo);
 void charReplace(char* str,char token,char replace);
 char* substr(char* str,int start, int length);
 int indexOf(char token, char* str, int skips);
 char** getBackupList(long* backupCount);
-int selectBackup(char** backupNames, long backupCount);
 void createBackup();
 int backupExists();
 char* getLatestBackup();
 void restoreBackup(char* backupName);
-int isNumOrLetter(char c);
 void undoLastChanges();
 void createPath(char* pathToCreate);
 

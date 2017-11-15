@@ -162,28 +162,6 @@ char* concatenate (char* str1, char*str2)
     return result;
 }
 
-
-int isNumOrLetter(char c)
-{
-    if (c >= 'a' && c <='z')
-    {
-        return 1;
-    }
-    if (c >= 'A' && c <='Z')
-    {
-        return 1;
-    }
-    if (c >= '0' && c <='9')
-    {
-        return 1;
-    }
-    if (c == '_')
-    {
-        return 1;
-    }
-    return 0;
-}
-
 int hexToInt(char* hex)
 {
    /*FILE* tmpFile = fopen("tmp.bin","wb");
@@ -343,46 +321,6 @@ void charReplace(char* str,char token,char replace)
     }
 }
 
-void printNextAsHex(char* str,int start, int length)
-{
-    int i = 0;
-
-    for (i = start; i < (start + length); i++)
-    {
-        printf("%x ", str[i]);
-    }
-    printf("\n");
-}
-
-void printNextAsDec(char* str,int start, int length)
-{
-    int i = 0;
-    printf("\n");
-    for (i = start; i < (start + length); i++)
-    {
-        printf("%d ", str[i]);
-    }
-    printf("\n");
-}
-
-void printIntAsHex(int num)
-{
-    char* converted = intToHex(num);
-    printHex(converted);
-}
-
-int nextFourBytesAsInt(char* str, int startLocation)
-{
-    int i = 0;
-    char fourBytes[5] = "";
-    fourBytes[4] = '\0';
-    for (i = 0; i < 4; i++)
-    {
-        fourBytes[i] = str[startLocation+i];
-    }
-    return hexToInt(fourBytes);
-}
-
 char* substr(char* str,int start, int end)
 {
     if (end < start)
@@ -425,72 +363,6 @@ int indexOf(char token, char* str, int skips)
         }
     }
     return i -1;
-}
-
-long locateHash(long hash,MemFileInt* metaFileInMemory,MetaFileInfo* metaFileInfo)
-{
-    long currentBlock = 0;
-    int readNum = 0;
-
-    int startBlock = metaFileInfo->fileBlocksStart/sizeof(int);
-    int endBlock = metaFileInfo->fileBlocksEnd/sizeof(int);
-
-    for (currentBlock = startBlock; currentBlock < endBlock; currentBlock++)
-    {
-        readNum = metaFileInMemory->block[currentBlock];
-
-        if(readNum == hash)
-        {
-            return currentBlock;
-        }
-    }
-    return NOT_FOUND;
-}
-
-
-long locateIntInMemory(int intToLocate,MemFileInt* arrayInMemory, MetaFileInfo* metaFileInfo)
-{
-    long currentBlock = 0;
-    int readNum = 0;
-
-    for (currentBlock = 0; currentBlock < arrayInMemory->size; currentBlock++)
-    {
-        readNum = arrayInMemory->block[currentBlock];
-
-
-        int startBlock = metaFileInfo->fileBlocksStart/sizeof(int);
-        int endBlock = metaFileInfo->fileBlocksEnd/sizeof(int);
-
-
-        if(readNum == intToLocate)
-        {
-            if ((currentBlock < startBlock || currentBlock > endBlock))
-            {
-                printf("                       OUTSIDE!");
-                 return NOT_FOUND;
-            }
-            return currentBlock;
-
-        }
-
-    }
-    return NOT_FOUND;
-}
-
-long locate2IntsInMemory(int int1, int int2 ,MemFileInt* arrayInMemory)
-{
-    //printf("\nlooking for: %.8x | %.8x\n", int1, int2);
-    long currentBlock = 0;
-    for (currentBlock = 0; currentBlock < arrayInMemory->size; currentBlock++)
-    {
-
-        if(arrayInMemory->block[currentBlock] == int1 && arrayInMemory->block[currentBlock + 1] == int2)
-        {
-            return currentBlock;
-        }
-
-    }
-    return NOT_FOUND;
 }
 
 void undoLastChanges()
@@ -554,95 +426,9 @@ void undoLastChanges()
     }
 }
 
-
-/*void toHex(int decimalNumber)
-{
-	int remainder;
-	int quotient;
-    int i=1,j;
-    char hexadecimalNumber[100];
-
-    quotient = decimalNumber;
-
-    while(quotient!=0)
-	{
-         remainder = quotient % 16;
-
-      //To convert integer into character
-      if( remainder < 10)
-           remainder = remainder + 48;		// Add 48(become ascii later) value to remainder if less than 10--see ascii table for more info
-      else
-         remainder = remainder + 55;		// Add 55(become ascii later) value to remainder if greater than 10--see ascii table for more info
-
-      hexadecimalNumber[i++]= remainder;
-
-      quotient = quotient / 16;
-    }
-
-    //printf("Equivalent hexadecimal value of %d is: ",decimalNumber);
-
-    for(j = i -1 ;j> 0;j--)
-    {
-      printf("%c",hexadecimalNumber[j]);
-    }
-
-}
-
-void printNextBytesAsHex(FILE* fp, int howManyBytes)
-{
-    int i = 0;
-    char c;
-    for (i = 0; i < howManyBytes; i++)
-    {
-        fread(&c,1,1,fp);
-        printf("%x ", c);
-    }
-}*/
-
-
-
 char** getBackupList(long* backupCount)
 {
     return getFilesSingleFolder(getCurrentPath(),"backup",backupCount);
-}
-
-int selectBackup(char** backupNames, long backupCount)
-{
-    long i = 0;
-     char input[32];
-     int optionSelected = -1;
-    int backupSelected = -1;
-
-    printf("\n\nList of backups:\n");
-    for (i = 0; i < backupCount; i++)
-    {
-       printf("%ld - %s\n", i + 1, backupNames[i]);
-    }
-    printf("0 - Back\n");
-    while (1)
-    {
-        printf("\nSelect backup number: ");
-        fgets(input,32,stdin);
-
-        optionSelected = atoi(input);
-        backupSelected = optionSelected - 1;
-
-        if (optionSelected == EXIT)
-        {
-            return -1;
-        }
-
-        if (optionSelected < 0 || optionSelected > backupCount)
-        {
-            printf("\nInvalid option!\n\n");
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return backupSelected;
 }
 
 void createBackup()
