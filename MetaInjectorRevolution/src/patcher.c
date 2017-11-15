@@ -84,7 +84,7 @@ int autoPatch()
                 }
             }
 
-			printf("\n%d - %s%s ", filesNotFoundCount + 1, filesToPatch[j].originalPath, filesToPatch[j].fileName);
+			printf("\n%d - %s%s ", j+1, filesToPatch[j].originalPath, filesToPatch[j].fileName);
 
             if (fileBlockFound != NULL) // If the name was found
             {
@@ -189,7 +189,7 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
 
     system("PAUSE");*/
 
-    printf("\n\nPatching Meta File...\n");
+    //printf("\n\nPatching Meta File...\n");
 
     int needToPatchAtLeastOne = 0;
     for (i = 0; i < filesToPatchCount; i++)

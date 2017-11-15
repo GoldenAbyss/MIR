@@ -5,19 +5,19 @@
 MetaFileInfo* getMetaFileInfo(char* metaFileName)
 {
     MetaFileInfo* metaFileInfo = NULL;
-    printf("\nFILE       : %s",metaFileName);
+    //printf("\nFILE       : %s",metaFileName);
 
     FILE* metaFile = openFile(metaFileName,"rb+");
     metaFileInfo = (MetaFileInfo*) calloc(1,sizeof(MetaFileInfo));
 
     fseek(metaFile,sizeof(long),SEEK_SET);
     fread(&metaFileInfo->pazCount,sizeof(long),1,metaFile);
-    printf("\nPAZ_COUNT  : %ld", metaFileInfo->pazCount);
+    //printf("\nPAZ_COUNT  : %ld", metaFileInfo->pazCount);
 
 
     fseek(metaFile,(metaFileInfo->pazCount * (3 * sizeof(long))),SEEK_CUR);
     fread(&metaFileInfo->filesCount,sizeof(long),1,metaFile);
-    printf("\nFILES_COUNT: %ld\n", metaFileInfo->filesCount);
+    //printf("\nFILES_COUNT: %ld\n", metaFileInfo->filesCount);
 
     metaFileInfo->originalFileBlocksStart = ftell(metaFile);
     metaFileInfo->fileBlocksStart = metaFileInfo->originalFileBlocksStart;
@@ -49,7 +49,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
     fread(&num_read,sizeof(long),1,metaFile) ;
 
-    printf("\nSearching for hash: %ld\n", multiplemodeldesc_hash);
+    //printf("\nSearching for hash: %ld\n", multiplemodeldesc_hash);
 
     // Searches for the hash, if found, from that point, it goes down block by block , storing the fileBlocks if they are valid, if they are not, it means that we reached the end
     // So we do the same thing, but going up this time
@@ -59,13 +59,13 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
        if (num_read == multiplemodeldesc_hash) // If the desired hash was found
         {
-            printf("found.\n");
+           // printf("found.\n");
            hash_found = 1;
 
             hash_offset_start = (ftell(metaFile) -sizeof(long));
 
             // Search down for valid File Blocks
-            printf("\nFilling File Blocks...\n");
+            //printf("\nFilling File Blocks...\n");
             fseek(metaFile,hash_offset_start,SEEK_SET);
             do
             {
@@ -112,7 +112,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
     if (hash_found == 0)
     {
-        printf("\nMultiplemodeldesc hash not found. Attempting to fill fileblocks anyway:\n");
+        //printf("\nMultiplemodeldesc hash not found. Attempting to fill fileblocks anyway:\n");
         PAUSE();
 
         fseek(metaFile,metaFileInfo->originalFileBlocksStart,SEEK_SET);
@@ -134,10 +134,10 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
         metaFileInfo->fileBlocksEnd = metaFileInfo->originalFileBlocksEnd;
 
     }
-     printf("FILE_BLOCKS_COUNT: %ld (%ld missing files)\n", metaFileInfo->fileBlocksCount,metaFileInfo->filesCount -  metaFileInfo->fileBlocksCount);
+     //printf("FILE_BLOCKS_COUNT: %ld (%ld missing files)\n", metaFileInfo->fileBlocksCount,metaFileInfo->filesCount -  metaFileInfo->fileBlocksCount);
 
-    printf("\nFILE_BLOCKS_START: %ld (%ld bytes skipped)\n", metaFileInfo->fileBlocksStart,metaFileInfo->fileBlocksStart - metaFileInfo->originalFileBlocksStart);
-    printf("FILE_BLOCKS_END  : %ld (%ld bytes more than the expected)\n\n", metaFileInfo->fileBlocksEnd,metaFileInfo->fileBlocksEnd - metaFileInfo->originalFileBlocksEnd);
+   // printf("\nFILE_BLOCKS_START: %ld (%ld bytes skipped)\n", metaFileInfo->fileBlocksStart,metaFileInfo->fileBlocksStart - metaFileInfo->originalFileBlocksStart);
+    //printf("FILE_BLOCKS_END  : %ld (%ld bytes more than the expected)\n\n", metaFileInfo->fileBlocksEnd,metaFileInfo->fileBlocksEnd - metaFileInfo->originalFileBlocksEnd);
 
     if (metaFileInfo->fileBlocksCount == 0)
     {
@@ -148,10 +148,10 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
      // Seek to file block end
     fseek(metaFile,metaFileInfo->fileBlocksEnd,SEEK_SET);
 
-    printf("Decrypting Folder Names...\n");
+    //printf("Decrypting Folder Names...\n");
     long folders_part_length = 0;
     fread(&folders_part_length, sizeof(long),1,metaFile);
-    printf("Encrypted folder names total length: %ld\n\n", folders_part_length);
+    //printf("Encrypted folder names total length: %ld\n\n", folders_part_length);
 
 
 /// ******************* FOLDER NAMES DECRYPTION **********************
@@ -197,7 +197,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
     int j = 0; // The current byte of the decrypted text
     int k = 0; // The current letter of the folderNamesArray[i]
-    printf("Saving Folder Names...\n");
+    //printf("Saving Folder Names...\n");
 
     i = 0; // Used to advance the fileNamesArray
     long folderNameLength = 0;
@@ -232,7 +232,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
             j += (2 * sizeof(long)); /* Skips the first 2 numbers */
         }
     }
-    printf("Folder Names saved: %d\n\n", i);
+    //printf("Folder Names saved: %d\n\n", i);
 
     // Assigns the right File Name from the fileNameArray to the right File Block, based on the File Num
     for (i = 0; i < metaFileInfo->fileBlocksCount; i++)
@@ -255,11 +255,11 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
 /// ******************* FILE NAMES DECRYPTION **********************
 
-    printf("Decrypting File Names...\n");
+    //printf("Decrypting File Names...\n");
 
     long filenames_part_length = 0;
     fread(&filenames_part_length, sizeof(long),1,metaFile);
-    printf("Encrypted file names total length: %ld\n\n", filenames_part_length);
+    //printf("Encrypted file names total length: %ld\n\n", filenames_part_length);
 
 
     ctext = (uint8_t *) malloc(filenames_part_length); // alloc to meet our need.
@@ -298,7 +298,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
 
     j = 0; // The current byte of the decrypted text
     k = 0; // The current letter of the fileName[i]
-    printf("Saving file names...\n");
+    //printf("Saving file names...\n");
 
     i = 0; // Used to advance the fileNamesArray
     long fileNameLength = 0;
@@ -346,12 +346,12 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
         // Ends the string
         fileBlocks[i].fileName[strlen(fileNamesArray[fileBlocks[i].fileNum])] = '\0';
     }
-    printf("File Names saved: %d (%ld less than expected)\n\n", i, metaFileInfo->fileBlocksCount - i);
+    //printf("File Names saved: %d (%ld less than expected)\n\n", i, metaFileInfo->fileBlocksCount - i);
 
-    printf("\nQuick sorting File Blocks...\n");
+    //printf("\nQuick sorting File Blocks...\n");
     // QUICK SORT
     qsort(fileBlocks,metaFileInfo->fileBlocksCount,sizeof(FileBlock),compare);
-    printf("Done.\n\n");
+    //printf("Done.\n\n");
 
 
     /*for (i = 0; i < metaFileInfo->fileBlocksCount; i++)
