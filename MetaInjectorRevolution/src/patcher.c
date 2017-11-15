@@ -7,9 +7,8 @@
  *
  ************************************************************************/
 /**
- * Patch the files
- * @arg menu1ChosenOption Choosen option. 1 = Patch file
- * @return 1 If the patching has failed
+ * Patch the files automatically
+ * @return 1 If the patching has failed, otherwise 0
  */
 int autoPatch()
 {
@@ -270,10 +269,13 @@ void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch)
 
 void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
 {
-    char* root = bdoRootFolder();
-    long filesCopied = 0;
+	char root[MAX_PATH];
+
+	long filesCopied = 0;
     int filesNotCopied = 0;
     int filesToCopyCount = 0;
+
+	getBDORootFolder(root, sizeof(root));
 
     for(int i = 0; i < filesToPatchCount; i++)
     {

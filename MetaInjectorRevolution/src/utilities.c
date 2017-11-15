@@ -986,10 +986,40 @@ void createLogFile()
     fclose(log);
 }
 
-char* bdoRootFolder()
+/**
+ * Get the BDO Root folder using a registry key.
+ * If the key is not found, we assume default directory
+ * @param[out] buffer Buffer where the BDO root directory will be copied
+ * @param[in] bufferLen Length of the buffer
+ * @return 1 if the registry key wasn't found or couldn't be opened
+ */
+int getBDORootFolder(char *buffer, int bufferLen)
 {
-	// TODO Récupéré le chemin vers BDO à partir du registre ou déduire un répertoire par défaut
-    return (oneLevelDown(getCurrentPath()));
+	char lszValue[MAX_PATH];
+	HKEY hKey;
+	LONG returnStatus;
+	DWORD dwType = REG_SZ;
+	DWORD dwSize = MAX_PATH;
+	returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, BDO_REGISTRY_KEY, NULL, KEY_READ, &hKey);
+	if (returnStatus == ERROR_SUCCESS)
+	{
+		returnStatus = RegQueryValueEx(hKey, TEXT("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize);
+		if (returnStatus == ERROR_SUCCESS)
+		{
+			strcat(lszValue, "\\");
+			strncpy(buffer, lszValue, bufferLen); //strlen(lszValue));
+			printf("debug: %s\n", buffer);
+
+			RegCloseKey(hKey);
+			return 0;
+		}
+	}
+
+	printf("Could not guess default directory (%d)\n", returnStatus);
+	printf("Fall back to %s\n", BDO_DEFAULT_ROOT_DIRECTORY);
+	RegCloseKey(hKey);
+
+	return 1;
 }
 
 int metaFileChangedSize()
@@ -1261,8 +1291,11 @@ int createArrowMenu(MenuElements menu, char** subtittle, int defaultSelected)
 
 void preventFileRecheck()
 {
+	char root[MAX_PATH];
+
     printf("\nPreventing File Check...\n");
-    char* root = bdoRootFolder();
+
+	getBDORootFolder(root, sizeof(root));
 
     char* configFileCheckPath = concatenate(root,"config.filecheck");
     char* versionDatPath = concatenate(root,"version.dat");
