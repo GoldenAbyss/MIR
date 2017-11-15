@@ -9,7 +9,7 @@
 #include "../include/file_operations.h"
 #include "../include/meta_explorer.h"
 
-void runPatcher(int menu1ChosenOption);
+int runPatcher(int menu1ChosenOption);
 void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1ChosenOption);
 void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch);
 void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount);

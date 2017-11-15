@@ -6,7 +6,12 @@
  *                        RUN PATCHER
  *
  ************************************************************************/
-void runPatcher(int menu1ChosenOption)
+/**
+ * Patch the files
+ * @arg menu1ChosenOption Choosen option. 1 = Patch file
+ * @return 1 If the patching has failed
+ */
+int runPatcher(int menu1ChosenOption)
 {
     FileBlock* fileBlocks = NULL;
     FileBlock* filesToPatch = NULL;
@@ -98,6 +103,14 @@ void runPatcher(int menu1ChosenOption)
     }
     else
     {
+		if (filesToPatchCount >= filesNotFoundCount)
+		{
+			printf("\nPatching failed...\n");
+			getch();
+			return 1;
+		}
+		printf("filesNotFoundCount: %d\n", filesNotFoundCount);
+		printf("filesToPatchCount: %d\n", filesToPatchCount);
         PAUSE();
     }
 
@@ -165,6 +178,9 @@ void runPatcher(int menu1ChosenOption)
         free(filesToPatch[i].originalPath);
     }
     free(filesToPatch);
+
+	// Operation successful
+	return 0;
 }
 
 
