@@ -183,6 +183,11 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
     int filesPatched = 0;
     long random_folder_num = 1;
     long random_file_num = 60556;
+	
+	FILE* metaFile;
+	FILE* modFile;
+
+	char modFilePath[MAX_PATH];
 
     /*printf("\n\nWe are about to make changes to your pad00000.meta file.");
     printf("\nPlease make sure you have made a manual backup before proceeding...\n\n");
@@ -210,11 +215,13 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
     qsort(filesToPatch,filesToPatchCount,sizeof(FileBlock),compare_meta_offset);
 
 
-    FILE* metaFile = openFile("pad00000.meta","rb+");
-    createPath("patcher_resources\\");
-    FILE* modFile = fopen("patcher_resources\\latest_modifications_meta_injector.bin","wb+");
+    metaFile = openFile("pad00000.meta","rb+");
 
-     printf("        HASH  FOLDER_NUM FILE_NUM BYTE_IN_META_FILE| FILE_NAME");
+    createPath(TEMP_DIR);
+	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
+    modFile = fopen(modFilePath,"wb+");
+
+    printf("        HASH  FOLDER_NUM FILE_NUM BYTE_IN_META_FILE| FILE_NAME");
     for (i = 0; i < filesToPatchCount; i++)
     {
         if(filesToPatch[i].needPatch == 1)

@@ -601,9 +601,13 @@ long locate2IntsInMemory(int int1, int int2 ,MemFileInt* arrayInMemory)
 
 void undoLastChanges()
 {
+	FILE *metaFile, *modFile;
+	char modFilePath[MAX_PATH];
+	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
 
-    FILE* metaFile = openFile("pad00000.meta","rb+");
-    FILE* modFile = fopen("patcher_resources\\latest_modifications_meta_injector.bin","rb");
+    metaFile = openFile("pad00000.meta","rb+");
+    modFile = fopen(modFilePath,"rb");
+
     if (modFile == NULL)
     {
         printf("\nNo last modifications detected.\n\n");
@@ -647,10 +651,9 @@ void undoLastChanges()
 
         printf("\nReverted changes: %ld\n\n", changesCount);
 
-
-
         fclose(modFile);
-          remove("patcher_resources/latest_modifications_meta_injector.bin");
+        remove(modFilePath);
+
         fclose(metaFile);
         free(metaFileInfo);
         system("PAUSE");
@@ -751,7 +754,10 @@ int selectBackup(char** backupNames, long backupCount)
 void createBackup()
 {
 	char cmd[256];
-    remove("patcher_resources/latest_modifications_meta_injector.bin");
+	char modFilePath[MAX_PATH];
+
+	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
+    remove(modFilePath);
 
 	// TODO Eviter d'utiliser une commande système pour simplement copier un fichier
 	// Risque de blocage dans des cas particulier
@@ -800,20 +806,14 @@ int backupExists()
 
 void restoreBackup(char* backupName)
 {
+	char modFilePath[MAX_PATH];
     char command[2048];
     sprintf(command,"xcopy /y \"%s\" pad00000.meta",backupName);
     system(command);
     preventFileRecheck();
-    remove("patcher_resources\\latest_modifications_meta_injector.bin");
-}
 
-//-----------------------------------------------------------------------------------------------------------------
-void createLogFile()
-{
-    FILE* log = openFile("patcher_resources/paz_browser.log","wb");
-    long lastMetafileSize = getFileSizeByName("pad00000.meta");
-    fwrite(&lastMetafileSize,sizeof(long),1,log);
-    fclose(log);
+	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
+    remove(modFilePath);
 }
 
 /**
@@ -850,25 +850,6 @@ int getBDORootFolder(char *buffer, int bufferLen)
 	RegCloseKey(hKey);
 
 	return 1;
-}
-
-int metaFileChangedSize()
-{
-    long lastMetafileSize = 0;
-    FILE* log = fopen("patcher_resources/paz_browser.log","rb");
-    if (!log)
-    {
-        return 1;
-    }
-    fread(&lastMetafileSize,sizeof(long),1,log);
-
-    if (lastMetafileSize != getFileSizeByName("pad00000.meta"))
-    {
-        fclose(log);
-        return 1;
-    }
-    fclose(log);
-    return 0;
 }
 
 char* getFileBlockFullPath(FileBlock* fileBlock)

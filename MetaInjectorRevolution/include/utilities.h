@@ -11,6 +11,7 @@
 #include "../include/meta_explorer.h"
 
 #define BACKUP_FILENAME "pad00000.meta.backup"
+#define TEMP_DIR "temp\\"
 #define BDO_REGISTRY_KEY "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{C1F96C92-7B8C-485F-A9CD-37A0708A2A60}"
 #define BDO_DEFAULT_ROOT_DIRECTORY "C:\\Program Files (x86)\\Black Desert Online\\"
 
@@ -46,10 +47,7 @@ int contains(char* fullString, char* substring);
 char* getClassPrefix(char* fileName);
 char* getLastFolder(char* folderName);
 
-void createLogFile();
 int getBDORootFolder(char *buffer, int bufferLen);
-
-int metaFileChangedSize();
 
 int compare(void const *a, void const *b);
 FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblocksCount);
