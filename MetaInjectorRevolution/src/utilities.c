@@ -1007,6 +1007,7 @@ void createLogFile()
 
 char* bdoRootFolder()
 {
+	// TODO Récupéré le chemin vers BDO à partir du registre ou déduire un répertoire par défaut
     return (oneLevelDown(getCurrentPath()));
 }
 

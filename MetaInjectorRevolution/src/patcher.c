@@ -73,9 +73,6 @@ int runPatcher(int menu1ChosenOption)
 				// Si le fileblock a le même nom de fichier on continue
                 if (strcmpi(fileBlocks[i].fileName,filesToPatch[j].fileName) == 0)
                 {
-					printf("\nfilesToPatch[j].originalPath = %s\n", filesToPatch[j].originalPath);
-					printf("fileBlocks[i].folderName = %s\n", fileBlocks[i].folderName);
-
 					// Ensuite on vérifie qu'ils sont dans le même dossier
                     if (strcmpi(filesToPatch[j].originalPath,fileBlocks[i].folderName) == 0)
                     {
@@ -104,21 +101,18 @@ int runPatcher(int menu1ChosenOption)
     {
         printf("\nDone.");
     }
-    else
-    {
-		if (filesToPatchCount >= filesNotFoundCount)
-		{
-			printf("\nPatching failed...\n");
-			getch();
-			return 1;
-		}
-		printf("filesNotFoundCount: %d\n", filesNotFoundCount);
-		printf("filesToPatchCount: %d\n", filesToPatchCount);
-        PAUSE();
-    }
+    else if (filesToPatchCount >= filesNotFoundCount)
+	{
+		printf("\nPatching failed...\n");
+		getch();
+		return 1;
+	}
+
 
 
     /// COPYING FILES
+	// On copie les fichiers qui vont être patché.
+	// Seul les fichiers patché sont copié car contenu dans *filesToPatch
      printf("\n\nCopying files from \"files_to_patch\\\" to their right locations...\n");
      copyFilesBack(filesToPatch, filesToPatchCount);
 
@@ -164,7 +158,7 @@ int runPatcher(int menu1ChosenOption)
     }
 
     printf("\n\n");
-    system("PAUSE");
+	getch();
 
     // END INSTALL
     for(i = 0; i < metaFileInfo->fileBlocksCount; i++)
@@ -282,15 +276,12 @@ void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch)
 
 void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
 {
-    int i = 0;
-    int replaceAll = 0;
-    int skippAll = 0;
-    char input = '\0';
     char* root = bdoRootFolder();
     long filesCopied = 0;
     int filesNotCopied = 0;
     int filesToCopyCount = 0;
-    for(i = 0; i < filesToPatchCount; i++)
+
+    for(int i = 0; i < filesToPatchCount; i++)
     {
         if(filesToPatch[i].needPatch == 1)
         {
@@ -298,7 +289,7 @@ void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
         }
     }
 
-    for(i = 0; i < filesToPatchCount; i++)
+    for(int i = 0; i < filesToPatchCount; i++)
     {
         if(filesToPatch[i].needPatch == 1)
         {
@@ -306,46 +297,15 @@ void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
             char* filePath = concatenate(folderPath,filesToPatch[i].fileName);
             createPath(folderPath);
 
+			// On replace tous les fichiers directement. Pas de confirm
             if (fileExists(filePath) && getFileSizeByName(filePath) > 0)
             {
-                if (replaceAll == 0 && skippAll == 0)
+                printf("(%ld/%d) - %s ", filesCopied+1, filesToCopyCount,filesToPatch[i].fileName);
+                if(!systemCopy(filesToPatch[i].fileName,concatenate("files_to_patch/",filesToPatch[i].originalPath),folderPath))
                 {
-                    input = '\0';
-                    while (input != ENTER && input != ESC && input != 's' && input != 'S' && input != 'R' && input != 'r')
-                    {
-                        printf("\nThe file \"%s\" already exists in:\n\"%s\"\n\n", filesToPatch[i].fileName,folderPath);
-                        printf("ENTER = Replace    ESCAPE = Skip   R = Replace All   S = Skip All\n\n");
-                        input = getch();
-
-                    }
-                    if (input == 'r' || input == 'R')
-                    {
-                        replaceAll = 1;
-                    }
-                     if (input == 's' || input == 'S')
-                    {
-                        skippAll = 1;
-                    }
-                    if (input == ENTER || input == 'r' || input == 'R')
-                    {
-                        printf("(%ld/%d) - %s ", filesCopied+1, filesToCopyCount,filesToPatch[i].fileName);
-
-                        if(!systemCopy(filesToPatch[i].fileName,concatenate("files_to_patch/",filesToPatch[i].originalPath),folderPath))
-                        {
-                           filesToPatch[i].needPatch = 0;
-                           filesNotCopied++;
-                        }
-                    }
-                }
-                else if (skippAll == 0)
-                {
-                    printf("(%ld/%d) - %s ", filesCopied+1, filesToCopyCount,filesToPatch[i].fileName);
-                    if(!systemCopy(filesToPatch[i].fileName,concatenate("files_to_patch/",filesToPatch[i].originalPath),folderPath))
-                    {
-                       filesToPatch[i].needPatch = 0;
-                       filesNotCopied++;
-                    }
-                }
+                    filesToPatch[i].needPatch = 0;
+                    filesNotCopied++;
+				}
             }
             else
             {
@@ -368,7 +328,7 @@ void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
     if (filesNotCopied != 0)
     {
         printColor("\nNot copied:", RED);
-        for(i = 0; i < filesToPatchCount; i++)
+        for(int i = 0; i < filesToPatchCount; i++)
         {
             if(filesToPatch[i].needPatch == 0)
             {
