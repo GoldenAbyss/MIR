@@ -43,7 +43,6 @@ void createPath(char* pathToCreate);
 char* getTwoDigits(char* fileName);
 char* getMiddleDigits(char* fileName);
 char* getFourDigits(char* fileName);
-int contains(char* fullString, char* substring);
 
 int getBDORootFolder(char *buffer, int bufferLen);
 

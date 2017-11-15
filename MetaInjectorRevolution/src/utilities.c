@@ -142,48 +142,6 @@ char* getMiddleDigits(char* fileName)
     return middle;
 }
 
-int contains(char* fullString, char* substring)
-{
-    if (strlen(substring) > strlen(fullString))
-    {
-        //printf("\nWarning: Wrong use of function 'contains(%s,%s)'. The first argument has to be longer than the second", fullString, substring);
-        return 0;
-    }
-    int i = 0;
-    int j = 0;
-    int combo = 0;
-    for (i = 0; i < strlen(fullString); i++)
-    {
-        if (substring[j] == fullString[i]
-        || substring[j] + 32 == fullString[i]
-        || substring[j] - 32 == fullString[i]
-        || (substring[j] == '/' && fullString[i] == '\\')
-        || (substring[j] == '\\' && fullString[i] == '/'))
-        {
-            combo++;
-            if (j + 1 <= strlen(substring))
-            {
-                j++;
-            }
-            else
-            {
-                combo = 0;
-                j = 0;
-            }
-        }
-        else
-        {
-            combo = 0;
-            j = 0;
-        }
-        if (combo == strlen(substring))
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 char* getFourDigits(char* fileName)
 {
     int start = indexOf('_',fileName,2) + 1;
