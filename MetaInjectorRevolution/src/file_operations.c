@@ -630,6 +630,7 @@ void goInside(char* startingPath, FileBlock** fileNames, char* extFilter, long* 
                     strcpy((*fileNames)[(*currentFile)].fileName,fileName); // Copies the file name to that string
                     (*fileNames)[(*currentFile)].fileName[strlen(fileName)] = '\0';
 
+					// TODO Remove constant expression "files_to_patch" awful.
                     (*fileNames)[(*currentFile)].originalPath = substr(startingPath,strlen("files_to_patch\\"), strlen(startingPath));
                     charReplace((*fileNames)[(*currentFile)].originalPath,'\\','/');
 

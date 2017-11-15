@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	if (!strcmpi(argv[1], "-autopatch"))
 	{
-		int r = autoPatch();
+		int r = autoPatch("files_to_patch\\");
 #ifdef _DEBUG
 		system("pause"); // TODO Remove me
 #endif

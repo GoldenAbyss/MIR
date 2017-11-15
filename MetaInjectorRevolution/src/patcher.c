@@ -7,12 +7,13 @@
  *
  ************************************************************************/
 /**
- * Patch the files automatically
+ * Patch the files automatically without asking for confirmations
+ * @param patchDir Directory containing the files to patch
  * @return 0 All files patched successfuly
  * @return 1 If the patching has failed
  * @return 2 Some file could not be patched
  */
-int autoPatch()
+int autoPatch(const char *patchDir)
 {
     FileBlock* fileBlocks = NULL;
     FileBlock* filesToPatch = NULL;
@@ -26,10 +27,8 @@ int autoPatch()
 
 	int returnCode = 0;
 
-    // printf("\nCounting files...\n\n");
-    // Counts how many files there is in the "files_to_patch" folder assigns to filesToPatchCount,
-    // and get all the file names in folders and sub folders and returns them as an array of strings
-    filesToPatch = getAllFiles("files_to_patch\\","*",&filesToPatchCount);
+    // Pour le moment autoPatch 
+    filesToPatch = getAllFiles(patchDir,"*",&filesToPatchCount);
 
     printf("%ld files to be patched...\n\n", filesToPatchCount);
 
@@ -121,7 +120,7 @@ int autoPatch()
 	// On copie les fichiers qui vont être patché.
 	// Seul les fichiers patché sont copié car contenu dans *filesToPatch
 	printf("\n\nCopying files to BDO root directory...\n");
-	copyFilesBack(filesToPatch, filesToPatchCount);
+	copyFilesBack(patchDir, filesToPatch, filesToPatchCount);
 
 	/// PATCHING META FILE
 	printf("\nPatching meta file...\n");
@@ -214,7 +213,6 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
      /// QUICK SORT "Files to patch" according to the meta offset
     qsort(filesToPatch,filesToPatchCount,sizeof(FileBlock),compare_meta_offset);
 
-
     metaFile = openFile("pad00000.meta","rb+");
 
     createPath(TEMP_DIR);
@@ -226,14 +224,7 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
     {
         if(filesToPatch[i].needPatch == 1)
         {
-            if (menu1ChosenOption == 0)
-            {
-                 printf("\n%.3d - %s %s  %s    (%.8ld)    | %s%s",filesPatched + 1, endian_convert((int)filesToPatch[i].hash),endian_convert((int)filesToPatch[i].folderNum),endian_convert((int)filesToPatch[i].fileNum), filesToPatch[i].metaOffset, substr(filesToPatch[i].originalPath,strlen("files_to_patch/"), strlen(filesToPatch[i].originalPath)), filesToPatch[i].fileName);
-            }
-            else
-            {
-                 printf("\n%.3d - %s %s  %s    (%.8ld)    | %s",filesPatched + 1, endian_convert((int)filesToPatch[i].hash),endian_convert((int)filesToPatch[i].folderNum),endian_convert((int)filesToPatch[i].fileNum), filesToPatch[i].metaOffset, filesToPatch[i].fileName);
-            }
+            printf("\n%.3d - %s %s  %s    (%.8ld)    | %s",filesPatched + 1, endian_convert((int)filesToPatch[i].hash),endian_convert((int)filesToPatch[i].folderNum),endian_convert((int)filesToPatch[i].fileNum), filesToPatch[i].metaOffset, filesToPatch[i].fileName);
 
             // Backup the original values to the  latest modification file
             fwrite(&filesToPatch[i].metaOffset,sizeof(long),1,modFile);
@@ -273,7 +264,7 @@ void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch)
     filesToPatch->needPatch = 1;
 }
 
-void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
+void copyFilesBack(const char *patchDir, FileBlock* filesToPatch, int filesToPatchCount)
 {
 	char root[MAX_PATH];
 
@@ -303,7 +294,7 @@ void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
             if (fileExists(filePath) && getFileSizeByName(filePath) > 0)
             {
                 printf("(%ld/%d) - %s ", filesCopied+1, filesToCopyCount,filesToPatch[i].fileName);
-                if(!systemCopy(filesToPatch[i].fileName,concatenate("files_to_patch/",filesToPatch[i].originalPath),folderPath))
+                if(!systemCopy(filesToPatch[i].fileName,concatenate(patchDir,filesToPatch[i].originalPath),folderPath))
                 {
                     filesToPatch[i].needPatch = 0;
                     filesNotCopied++;
@@ -313,15 +304,13 @@ void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount)
             {
                 printf("(%ld/%d) - %s ", filesCopied+1, filesToCopyCount,filesToPatch[i].fileName);
 
-                if(!systemCopy(filesToPatch[i].fileName,concatenate("files_to_patch/",filesToPatch[i].originalPath),folderPath))
+                if(!systemCopy(filesToPatch[i].fileName,concatenate(patchDir,filesToPatch[i].originalPath),folderPath))
                 {
                    filesToPatch[i].needPatch = 0;
                    filesNotCopied++;
                 }
             }
-
-                filesCopied++;
-
+            filesCopied++;
          }
     }
     printf("Done\n\n    Copied: %ld of %d files.\n",filesCopied - filesNotCopied, filesToCopyCount);

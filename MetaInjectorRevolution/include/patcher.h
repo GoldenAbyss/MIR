@@ -12,5 +12,5 @@
 int autoPatch();
 void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1ChosenOption);
 void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch);
-void copyFilesBack(FileBlock* filesToPatch, int filesToPatchCount);
+void copyFilesBack(const char *patchDir, FileBlock* filesToPatch, int filesToPatchCount);
 #endif
