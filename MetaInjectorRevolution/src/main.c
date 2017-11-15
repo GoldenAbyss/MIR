@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         printf("5 - Prevent File Re-check\n");
         printf("0 - Exit\n");
 		*/
-		return runPatcher(1);	// 1= Run Injector
+		return autoPatch(1);	// 1= Run Injector
 	}
 	else
 	{
@@ -65,62 +65,4 @@ int main(int argc, char **argv)
 	// Will put back the original pad00000.meta
 
     return 0;
-}
-int menu0(long filesPatchedCount)
-{
-    char input = '\0';
-    int nOptions = 5;
-    int optionSelected = -1;
-
-
-
-     // Display the menu to select the region
-    while(1) // This condition makes the menu repeat itself until a valid input is entered
-    {
-        system("cls"); // clears the screen
-        printMainHeader();
-        printf("Meta file status: ");
-        if (filesPatchedCount == 0)
-        {
-            printColor("Clean", GREEN);
-        }
-        else
-        {
-            printf("%ld files currently patched", filesPatchedCount);
-        }
-
-
-        printf("\n\nEnter your choice: ");
-        fflush(stdin);
-        scanf("%c",&input);
-        fflush(stdin);
-
-        if (input == 10) // ENTER
-        {
-            return 1;
-        }
-
-        // Converts the read string to int
-        optionSelected = input - '0';
-
-        // This variable also tells the program later which one of the "moddedBytes" the program should use when replacing the bytes
-
-        if (optionSelected == 0)
-        {
-            return 0;
-        }
-
-
-         // If the user entered an invalid option, displays a error message
-        if(optionSelected < 1 || optionSelected > nOptions)
-        {
-             printf("\nInvalid option! %c(%d)\n\n", input, input);
-            Sleep(500);
-        }
-        else
-        {
-            break;
-        }
-    }
-    return optionSelected;
 }

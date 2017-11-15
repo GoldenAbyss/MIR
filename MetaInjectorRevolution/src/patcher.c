@@ -11,7 +11,7 @@
  * @arg menu1ChosenOption Choosen option. 1 = Patch file
  * @return 1 If the patching has failed
  */
-int runPatcher(int menu1ChosenOption)
+int autoPatch()
 {
     FileBlock* fileBlocks = NULL;
     FileBlock* filesToPatch = NULL;
@@ -119,7 +119,7 @@ int runPatcher(int menu1ChosenOption)
 
 
     /// PATCHING META FILE
-    patchMetaFile(filesToPatch, filesToPatchCount, menu1ChosenOption);
+    patchMetaFile(filesToPatch, filesToPatchCount, 1);
 
 
     printf("\n\nFinished!\n");
