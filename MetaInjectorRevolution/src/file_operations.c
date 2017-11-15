@@ -473,7 +473,10 @@ char* fileTok(FILE* fp, char token)
 
 /**
 * Get all files containing the filter extFilter
-* @param pathToFiles
+* @param pathToFiles Directory to look in
+* @param extFilter Filter word. The filename must contain it
+* @param[out] totalFiles Return the number of positive match
+* @return Filename listing
 */
 char** getFilesSingleFolder(char* pathToFiles, char* extFilter, long* totalFiles)
 {

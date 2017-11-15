@@ -957,8 +957,7 @@ int backupExists()
 {
     long backupCount = 0;
 
-	// Recherche des fichiers backup dans le répertoire courant
-	printf("current path = %s\n", getCurrentPath());
+	// Donne un listing de tous les fichiers finissant par backup
     char** backups = getFilesSingleFolder(getCurrentPath(),"backup", &backupCount);
 
     if (backupCount == 1)
