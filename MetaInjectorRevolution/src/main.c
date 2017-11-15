@@ -14,18 +14,6 @@ int main(int argc, char **argv)
 	printf("-- based on Meta Injector Reloaded 2.0e                  --\n");
 	printf("-- Thanks to BlackFireBR                                 --\n");
 	printf("-----------------------------------------------------------\n\n");
-    
-	if (!fileExists("pad00000.meta"))
-	{
-		printf("\nError: could not locate pad00000.meta\n");
-		printf("\nMake sure you place this program in the same folder as the pad00000.meta file.\n");
-		printf("\nIf it already is. Try running this program as administrator.\n");
-		printf("\nIf that doesn't work either. Move your entire game's folder to your desktop and try again.");
-#ifdef _DEBUG
-		system("pause"); // TODO Remove me
-#endif
-		return 1;
-	}
 
 	if (argc <= 1)
 	{

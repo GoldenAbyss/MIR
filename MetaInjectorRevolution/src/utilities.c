@@ -69,11 +69,14 @@ void createPath(char* pathToCreate)
 
 char* getLatestBackup()
 {
+	char padFilePath[MAX_PATH];
     long backupCount = 0;
     char** backups = getBackupList(&backupCount);
+
     if (backupCount == 0)
     {
-        return "pad00000.meta";
+		getPadFilePath(padFilePath, sizeof(padFilePath));
+        return padFilePath;
     }
     return backups[backupCount - 1];
 }
@@ -153,67 +156,6 @@ char* substr(char* str,int start, int end)
     return sub;
 }
 
-void undoLastChanges()
-{
-	FILE *metaFile, *modFile;
-	char modFilePath[MAX_PATH];
-	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
-
-    metaFile = openFile("pad00000.meta","rb+");
-    modFile = fopen(modFilePath,"rb");
-
-    if (modFile == NULL)
-    {
-        printf("\nNo last modifications detected.\n\n");
-        fclose(metaFile);
-        system("PAUSE");
-        return;
-    }
-
-    printf("\n\nReverting File");
-    if (getFileSize(modFile) == 0)
-    {
-        printf("\nNo changes to undo.\n\n");
-        fclose(metaFile);
-        fclose(modFile);
-        system("PAUSE");
-        return;
-    }
-    else
-    {
-        MetaFileInfo* metaFileInfo = getMetaFileInfo("pad00000.meta");
-        fseek(metaFile,metaFileInfo->fileBlocksStart,SEEK_SET);;
-
-        long offset = 0;
-        long folderNum = 0;
-        long fileNum = 0;
-        long changesCount = 0;
-
-
-        while(fread(&offset,sizeof(long),1,modFile))
-        {
-            fread(&folderNum,sizeof(long),1,modFile);
-            fread(&fileNum,sizeof(long),1,modFile);
-
-            fseek(metaFile,offset + sizeof(long),SEEK_SET);
-
-            fwrite(&folderNum,sizeof(long),1,metaFile);
-            fwrite(&fileNum,sizeof(long),1,metaFile);
-
-            changesCount++;
-        }
-
-        printf("\nReverted changes: %ld\n\n", changesCount);
-
-        fclose(modFile);
-        remove(modFilePath);
-
-        fclose(metaFile);
-        free(metaFileInfo);
-        system("PAUSE");
-    }
-}
-
 char** getBackupList(long* backupCount)
 {
     return getFilesSingleFolder(getCurrentPath(),"backup",backupCount);
@@ -242,6 +184,7 @@ int createBackup()
 	return 1;
 }
 
+/*
 int backupExists()
 {
     long backupCount = 0;
@@ -270,6 +213,7 @@ int backupExists()
     fclose(metaFile);
     return 0;
 }
+*/
 
 /**
  * Erase the current pad00000.meta and replace it by the backup file
@@ -293,13 +237,24 @@ void restoreBackup()
 }
 
 /**
+ * Get the pad00000.meta file path in the buffer
+ * It is "guessed" from the getBDORootFolder() function
+ * @param[out] path Buffer that will contain the path to the pad file
+ */
+int getPadFilePath(char *path, const int len)
+{
+	getBDORootFolder(path, len);
+	strcat(path, META_FILE_SUBDIR); // strncat
+}
+
+/**
  * Get the BDO Root folder using a registry key.
  * If the key is not found, we assume default directory
  * @param[out] buffer Buffer where the BDO root directory will be copied
  * @param[in] bufferLen Length of the buffer
  * @return 1 if the registry key wasn't found or couldn't be opened
  */
-int getBDORootFolder(char *buffer, int bufferLen)
+int getBDORootFolder(char *buffer, const int len)
 {
 	char lszValue[MAX_PATH];
 	HKEY hKey;
@@ -313,7 +268,7 @@ int getBDORootFolder(char *buffer, int bufferLen)
 		if (returnStatus == ERROR_SUCCESS)
 		{
 			strcat(lszValue, "\\");
-			strncpy(buffer, lszValue, bufferLen); //strlen(lszValue));
+			strncpy(buffer, lszValue, len); //strlen(lszValue));
 
 			RegCloseKey(hKey);
 			return 0;
@@ -322,6 +277,9 @@ int getBDORootFolder(char *buffer, int bufferLen)
 
 	printf("Could not guess default directory (%d)\n", returnStatus);
 	printf("Fall back to %s\n", BDO_DEFAULT_ROOT_DIRECTORY);
+
+	strncpy(buffer, BDO_DEFAULT_ROOT_DIRECTORY, len);
+
 	RegCloseKey(hKey);
 
 	return 1;

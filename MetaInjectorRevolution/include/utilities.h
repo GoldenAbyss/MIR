@@ -25,18 +25,15 @@ void charReplace(char* str,char token,char replace);
 char* substr(char* str,int start, int length);
 char** getBackupList(long* backupCount);
 
-void fetchPadFile();
-void pushPadFile();
+int getPadFilePath(char *, const int);
 
 int createBackup();
 void restoreBackup();
 
-int backupExists();
 char* getLatestBackup();
-void undoLastChanges();
 void createPath(char* pathToCreate);
 
-int getBDORootFolder(char *buffer, int bufferLen);
+int getBDORootFolder(char *buffer, const int len);
 
 int compare(void const *a, void const *b);
 void PAUSE();

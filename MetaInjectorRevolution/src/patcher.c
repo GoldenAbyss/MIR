@@ -22,10 +22,19 @@ int autoPatch(const char *patchDir)
     int filesNotPatchedCount = 0;
     int filesSkippedCount = 0;
     int filesNotFoundCount = 0;
+	char padFilePath[MAX_PATH];
 
     int i = 0, j = 0;
 
 	int returnCode = 0;
+
+	// Vérification de l'existence du fichier pad
+	getPadFilePath(padFilePath, sizeof(padFilePath));
+	if (!fileExists(padFilePath))
+	{
+		printf("Pad file not found\nIs BDO installed ?\n");
+		return 1;
+	}
 
     // Pour le moment autoPatch 
     filesToPatch = getAllFiles(patchDir,"*",&filesToPatchCount);
@@ -119,7 +128,7 @@ int autoPatch(const char *patchDir)
 
 	/// PATCHING META FILE
 	printf("\nPatching meta file...\n");
-	patchMetaFile(filesToPatch, filesToPatchCount, 1);
+	patchMetaFile(padFilePath, filesToPatch, filesToPatchCount);
 
 	printf("\n\nDone.\n");
 
@@ -171,7 +180,7 @@ int autoPatch(const char *patchDir)
 }
 
 
-void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1ChosenOption)
+void patchMetaFile(const char *padFilePath, FileBlock* filesToPatch, const int filesToPatchCount)
 {
     int i = 0;
     int filesPatched = 0;
@@ -208,7 +217,7 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
      /// QUICK SORT "Files to patch" according to the meta offset
     qsort(filesToPatch,filesToPatchCount,sizeof(FileBlock),compare_meta_offset);
 
-    metaFile = openFile("pad00000.meta","rb+");
+    metaFile = openFile(padFilePath,"rb+");
 
     createPath(TEMP_DIR);
 	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);

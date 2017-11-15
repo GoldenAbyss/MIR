@@ -10,7 +10,7 @@
 #include "../include/meta_explorer.h"
 
 int autoPatch();
-void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1ChosenOption);
+void patchMetaFile(const char *padFilePath, FileBlock* filesToPatch, const int filesToPatchCount);
 void addToFilesToPatch(FileBlock* fileBlockFound, FileBlock* filesToPatch);
 void copyFilesBack(const char *patchDir, FileBlock* filesToPatch, int filesToPatchCount);
 #endif

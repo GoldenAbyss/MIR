@@ -42,6 +42,7 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
     fileBlocks = (FileBlock*)calloc(metaFileInfo->filesCount + 1, sizeof(FileBlock));
     metaFileInfo->fileBlocksCount = 0;
 
+	// TODO Vérifier pourquoi cette fonction a besoin d'un backup
     FILE* metaFile = openFile(getLatestBackup(),"rb");
     //fseek(metaFile,metaFileInfo->originalFileBlocksStart,SEEK_SET); // Go to where the file blocks are supposed to start
 
