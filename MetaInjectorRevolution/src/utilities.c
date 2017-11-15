@@ -857,38 +857,6 @@ char* getFileBlockFullPath(FileBlock* fileBlock)
     return concatenate(fileBlock->folderName,fileBlock->fileName);
 }
 
-FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblocksCount)
-{
-    int first = 0;
-    int last = fileblocksCount - 1;
-    int middle = (int)(first+last)/2;
-
-    while (first <= last)
-    {
-        if (strcmpi(fileBlocks[middle].fileName,key) < 0)
-        {
-            first = middle + 1;
-        }
-
-        else if (strcmpi(fileBlocks[middle].fileName,key)  == 0)
-        {
-            return &fileBlocks[middle];
-        }
-        else
-        {
-            last = middle - 1;
-        }
-
-        middle = (first + last)/2;
-   }
-   if (first > last)
-   {
-      /*printf("Not found! %s is not present in the list.\n", key);
-      system("PAUSE");*/
-   }
-   return NULL;
-}
-
 void PAUSE()
 {
     printf("\n\n");

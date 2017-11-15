@@ -50,7 +50,6 @@ char* getLastFolder(char* folderName);
 int getBDORootFolder(char *buffer, int bufferLen);
 
 int compare(void const *a, void const *b);
-FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblocksCount);
 char* getFileBlockFullPath(FileBlock* fileBlock);
 int isPatched(FileBlock* fileBlock, MetaFileInfo* metaFileInfo, FILE* metaFile);
 void PAUSE();
