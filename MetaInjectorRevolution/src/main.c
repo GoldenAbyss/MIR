@@ -6,26 +6,9 @@
 #include "../include/utilities.h"
 #include "../include/patcher.h"
 
-
-int menu0(long filesPatchedCount);
-int menu1();
-
-void menuRemoveOrRestore(int mode);
-
-/*
-TODO :
-- Ne plus identifier un fichier par son nom uniquement
-
-- Support des arguments
-*/
-
 // Ajouter le support des arguments (argv/argc)
 int main(int argc, char **argv)
 {
-    int menu0ChosenOption = -1;
-    int menu1ChosenOption = -1;
-    isWindows10 = (getWindowsVersion() == 10);
-
 	printf("-----------------------------------------------------------\n");
 	printf("- Meta Injector Revolution alpha 0.1					  -\n");
 	printf("- based on BlackFireBR Meta Injector Reloaded 2.0e        -\n");
