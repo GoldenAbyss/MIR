@@ -20,81 +20,6 @@ int compare_meta_offset(void const *a, void const *b) {
     return (aaa - bbb);
 }
 
-int sort_by_folder_name_and_file_name(void const *a, void const *b) {
-    FileBlock *aa = (FileBlock *)a;
-    FileBlock *bb = (FileBlock *)b;
-
-    char* folderNameA = (char*)aa->folderName;
-    char* folderNameB = (char*)bb->folderName;
-
-    char* fileNameA =  (char*)aa->fileName;
-    char* fileNameB =  (char*)bb->fileName;
-
-    char* completePathA = concatenate(folderNameA,fileNameA);
-    char* completePathB = concatenate(folderNameB,fileNameB);
-
-    int result = strcmp(completePathA, completePathB);
-
-    free(completePathA);
-    free(completePathB);
-
-    return result;
-}
-
-long countPatchedFiles()
-{
-    printf("\nCounting patched files...");
-    MetaFileInfo* metaFileInfo = getMetaFileInfo(getLatestBackup());
-    long filesPatched = 0;
-    int i = 0;
-    FileBlock moddedFileBlocks;
-    FILE* metaFile = openFile("pad00000.meta", "rb");
-
-    fseek(metaFile,metaFileInfo->fileBlocksStart,SEEK_SET);
-
-    for (i = 0; i < metaFileInfo->fileBlocksCount; i++)
-    {
-        fread(&moddedFileBlocks.hash,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.folderNum,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.fileNum,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.pazNum,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.fileOffset,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.zsize,sizeof(long),1,metaFile);
-        fread(&moddedFileBlocks.size,sizeof(long),1,metaFile);
-
-        if ((moddedFileBlocks.folderNum == RANDOM_FOLDER_NUM) && (moddedFileBlocks.fileNum == RANDOM_FILE_NUM))
-        {
-            filesPatched++;
-        }
-    }
-
-    if (filesPatched == 0)
-    {
-        rewind(metaFile);
-        long readNum1 = -1;
-        long readNum2 = -1;
-        fread(&readNum1,sizeof(long),1,metaFile);
-        while(1)
-        {
-            if (!fread(&readNum2,sizeof(long),1,metaFile))
-            {
-                break;
-            }
-            if (readNum1 == RANDOM_FOLDER_NUM && readNum2 == RANDOM_FILE_NUM)
-            {
-                filesPatched++;
-            }
-            readNum1 = readNum2;
-        }
-    }
-    fclose(metaFile);
-    free(metaFileInfo);
-
-    printf("\nDone.");
-
-    return filesPatched;
-}
-
 char* endian_convert(int num)
 {
     char big_end[12];
@@ -162,23 +87,6 @@ char* concatenate (char* str1, char*str2)
     return result;
 }
 
-int hexToInt(char* hex)
-{
-   /*FILE* tmpFile = fopen("tmp.bin","wb");
-   fwrite(hex,sizeof(int),1,tmpFile);
-   int num = 0;
-   rewind(tmpFile);
-   fread(tmpFile)*/
-   return 0;
-}
-
-char* intToHex(int x)
-{
-    char* hex = (char*) malloc(sizeof(int) + 1);
-    sprintf(hex,"%d",x);
-    return hex;
-}
-
 void printColor(char* stringToPrint, Color COLOR)
 {
     if (isWindows10)
@@ -204,109 +112,6 @@ void printColor(char* stringToPrint, Color COLOR)
         printf("%s", stringToPrint);
     }
 }
-
-void addToStringArray(char* fileNameToAdd, char*** ref_stringArray, int* ref_arrraySize)
-{
-    // If the variable that holds the fileNames of the files that failed to patch hasn't been initialized yet
-    if ((*ref_stringArray) == NULL)
-    {
-        (*ref_stringArray) = (char**) malloc(sizeof(char*));
-    }
-    else // If it has been initialized
-    {
-         // Increases the size
-        (*ref_stringArray) = (char**) realloc((*ref_stringArray), (((*ref_arrraySize) + 1) * sizeof(char*)));
-    }
-    // Allocates memory to copy the failed file name
-    (*ref_stringArray)[(*ref_arrraySize)] = (char*) malloc(strlen(fileNameToAdd) + 1);
-    strcpy((*ref_stringArray)[(*ref_arrraySize)],fileNameToAdd); // Copies the name of the failed file
-
-    (*ref_arrraySize)++;
-}
-
-int isPatched(FileBlock* fileBlock, MetaFileInfo* metaFileInfo, FILE* metaFile)
-{
-    fseek(metaFile,fileBlock->metaOffset,SEEK_SET);
-    int hashFound = 0;
-    long hash = -1;
-    fread(&hash,sizeof(long),1,metaFile);
-    if (hash != fileBlock->hash)
-    {
-        while(ftell(metaFile) >= metaFileInfo->fileBlocksStart)
-        {
-            fseek(metaFile,-8, SEEK_CUR); // -2 * sizeof(long)
-            fread(&hash,sizeof(long),1,metaFile);
-            if (hash == fileBlock->hash)
-            {
-                hashFound = 1;
-                break;
-            }
-        }
-        if (hashFound == 0)
-        {
-            fseek(metaFile,fileBlock->metaOffset + sizeof(long),SEEK_SET);
-            while(ftell(metaFile) < metaFileInfo->fileBlocksEnd)
-            {
-                fread(&hash,sizeof(long),1,metaFile);
-                if (hash == fileBlock->hash)
-                {
-                    hashFound = 1;
-                    break;
-                }
-            }
-        }
-    }
-    else
-    {
-        hashFound = 1;
-    }
-    if (hashFound == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        long folderNum = -1;
-        long fileNum = -1;
-        fread(&folderNum,sizeof(long),1,metaFile);
-        fread(&fileNum,sizeof(long),1,metaFile);
-
-        if (folderNum == RANDOM_FOLDER_NUM && fileNum == RANDOM_FILE_NUM)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    return 0;
-}
-
-int alreadyInStringArray(char* fileName,char** stringArray, int arrraySize)
-{
-    int i = 0;
-    for (i = 0; i < arrraySize; i++)
-    {
-        if (strcmpi(stringArray[i],fileName) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void printHex(char* str)
-{
-    int i = 0;
-    printf("\n");
-    for (i = 0; i < strlen(str); i++)
-    {
-        printf("%x ", str[i]);
-    }
-    printf("\n");
-}
-
 
 void charReplace(char* str,char token,char replace)
 {
@@ -342,27 +147,6 @@ char* substr(char* str,int start, int end)
     }
     sub[j - 1] = '\0';
     return sub;
-}
-
-int indexOf(char token, char* str, int skips)
-{
-    int i = 0;
-    int skipped = 0;
-    for (i = 0; i < strlen(str); i++)
-    {
-        if (str[i] == token)
-        {
-            if (skipped == skips)
-            {
-                return i;
-            }
-            else
-            {
-                skipped++;
-            }
-        }
-    }
-    return i -1;
 }
 
 void undoLastChanges()
