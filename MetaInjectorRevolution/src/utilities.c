@@ -122,18 +122,6 @@ char* endian_convert(int num)
     return little_end;
 }
 
-
-void printMainHeader()
-{
-
-    printf("******************************************************\n");
-    printf("*                                                    *\n");
-    printf("*                Meta Injector v2.0e                 *\n");
-    printf("*                                                    *\n");
-    printf("******************************************************\n");
-}
-
-
 char* getTwoDigits(char* fileName)
 {
     int start = indexOf('_',fileName,0) + 1;
@@ -240,27 +228,6 @@ char* getFourDigits(char* fileName)
     return fourDigits;
 }
 
-
-void askConfirmation()
-{
-    PAUSE();
-    /*printf("Do you want to proceed anyway? (y/n) ");
-    char input[32] = "";
-     while (strcmpi(input,"y") != 0 && strcmpi(input,"n") != 0)
-     {
-        fflush(stdin);
-        scanf("%s", input);
-        fflush(stdin);
-     }
-
-    if (strcmpi(input,"n") == 0)
-    {
-        printf("\nExiting.\n\n");
-        system("PAUSE");
-        exit(1);
-    }*/
-}
-
 void createPath(char* pathToCreate)
 {
     charReplace(pathToCreate,'/','\\');
@@ -280,44 +247,6 @@ void createPath(char* pathToCreate)
         free (mdCommand);
     }
 }
-
-void backupMenu()
-{
-    int backupSelected = -1;
-
-        long backupCount = 0;
-        char** backupNames = getBackupList(&backupCount);
-        if (backupCount > 0)
-        {
-            while (1)
-            {
-                 backupSelected  = selectBackup(backupNames, backupCount);
-
-                 if (backupSelected == -1)
-                 {
-                     return;
-                 }
-
-                 if (backupSelected < 0 || backupSelected > backupCount - 1)
-                 {
-                    printf("\nInvalid option!\n\n");
-                 }
-                 else
-                 {
-                     break;
-                 }
-            }
-
-            restoreBackup(backupNames[backupSelected]);
-        }
-        else
-        {
-             printf("No backup was found");
-        }
-        PAUSE();
-}
-
-
 
 char* getLatestBackup()
 {
@@ -404,36 +333,6 @@ void printColor(char* stringToPrint, Color COLOR)
     }
 }
 
-int getWindowsVersion()
-{
-    createPath("patcher_resources\\");
-    system("cd patcher_resources\\ & ver >windows_version.txt");
-
-    FILE* fp = fopen("patcher_resources\\windows_version.txt", "rb");
-
-    if (fp == NULL)
-    {
-        return 0;
-    }
-    int c = '\0';
-    while(fread(&c,1,1,fp))
-    {
-        if (c == '.')
-        {
-            fseek(fp,-3,SEEK_CUR);
-            char versionStr[3] = "";
-            fread(versionStr,2,sizeof(char),fp);
-            fclose(fp);
-            remove("patcher_resources\\windows_version.txt");
-            return  atoi(versionStr);
-
-        }
-    }
-    fclose(fp);
-    remove("patcher_resources\\windows_version.txt");
-    return 0;
-}
-
 void listPatchedFiles(int patchedFilesCount)
 {
     if (patchedFilesCount == 0)
@@ -471,7 +370,7 @@ void listPatchedFiles(int patchedFilesCount)
     qsort(patchedFiles,patchedFilesCount,sizeof(FileBlock),sort_by_folder_name_and_file_name);
     printf("\nDone.");
     //system("cls");
-    printMainHeader();
+
     printf("List of currently patched files:\n");
     for(i = 0; i < patchedFilesCount; i++)
     {
@@ -1112,54 +1011,6 @@ char** getTexturesFrom(FileBlock* fileBlock, char* fileLocation, int* return_tex
     return textureNames;
 }
 
-
-int createMenu(MenuElements menu)
-{
-    char input[2048] = "";       // A simple buffer to store whatever the user types in the menu
-    int optionSelected = -1;
-    int i = 0;
-
-     // Display the menu to select the region
-    while(1) // This condition makes the menu repeat itself until a valid input is entered
-    {
-        //system("cls"); // clears the screen
-        printMainHeader();
-        printf("%s\n", menu.header);
-        for (i = 1; i <= menu.nOptions; i++)
-        {
-            printf("%d - %s\n",i, menu.menuoptions[i]);
-        }
-        printf("0 - %s\n", menu.menuoptions[0]);
-        printf("\nEnter your choice: ");
-        fflush(stdin);
-        fgets(input,2048,stdin);
-        input[strlen(input) - 1] = '\0';
-
-        // Converts the read string to int
-        optionSelected = atoi(input);
-
-        // This variable also tells the program later which one of the "moddedBytes" the program should use when replacing the bytes
-
-        if (optionSelected == 0)
-        {
-            return 0;
-        }
-
-         // If the user entered an invalid option, displays a error message
-        if(optionSelected < 1 || optionSelected > menu.nOptions)
-        {
-            printf("\nInvalid option!\n\n");
-            Sleep(500);
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return optionSelected;
-}
-
 FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblocksCount)
 {
     int first = 0;
@@ -1197,97 +1048,6 @@ void PAUSE()
     printf("\n\n");
     system("PAUSE");
 }
-
-int createArrowMenu(MenuElements menu, char** subtittle, int defaultSelected)
-{
-    char input = '\0';
-    int cursor = 0;
-    if (defaultSelected < menu.nOptions && defaultSelected >= 0)
-    {
-        cursor = defaultSelected;
-    }
-    int i = 0;
-
-    while(1)
-    {
-        //system("cls");
-        printMainHeader();
-        printf("%s\n\n", menu.header);
-        for (i = 0; i < menu.nOptions; i++)
-        {
-            if(cursor == i)
-            {
-               printf(" -> %s\n",menu.menuoptions[i]);
-            }
-            else
-            {
-                printf("    %s\n",menu.menuoptions[i]);
-            }
-        }
-
-           printf("\n%s\n", subtittle[cursor]);
-
-        if (strcmpi(menu.menuoptions[i-1],"Exit") != 0)
-        {
-            printf("\nENTER     - Confirm");
-            printf("\nARROWS    - Change Selected Option");
-            printf("\nBACKSPACE - Go back\n");
-        }
-        else
-        {
-            printf("\n");
-            printf("ENTER  - Confirm\n");
-            printf("ARROWS - Change Selected Option\n");
-            printf("ESC    - Exit\n");
-        }
-
-        input = getch();
-
-        if (input == ENTER)
-        {
-            break;
-        }
-        else if (input == ARROW_DOWN)
-        {
-            if (cursor + 1 < menu.nOptions)
-            {
-                cursor++;
-            }
-            else
-            {
-                cursor = 0;
-            }
-        }
-        else if (input == ARROW_UP)
-        {
-            if (cursor - 1 >= 0)
-            {
-                cursor--;
-            }
-            else
-            {
-                cursor = menu.nOptions;
-            }
-        }
-        if (strcmpi(menu.menuoptions[i-1],"Exit") != 0)
-        {
-            if (input == BACKSPACE)
-            {
-                return BACKSPACE;
-            }
-        }
-        else
-        {
-            if (input == ESC)
-            {
-                return EXIT;
-            }
-        }
-    }
-
-    return cursor;
-}
-
 
 void preventFileRecheck()
 {

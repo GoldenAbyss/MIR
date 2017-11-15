@@ -18,7 +18,6 @@ int compare_meta_offset(void const *a, void const *b) ;
 int sort_by_folder_name_and_file_name(void const *a, void const *b);
 typedef enum {RED,GREEN,YELLOW} Color;
 long countPatchedFiles();
-void printMainHeader();
 long locateHash(long hash,MemFileInt* metaFileInMemory,MetaFileInfo* metaFileInfo);
 char* concatenate (char* str1, char*str2); // Merges 2 strings into 1
 char* endian_convert(int num);
@@ -35,14 +34,12 @@ int indexOf(char token, char* str, int skips);
 char** getBackupList(long* backupCount);
 int selectBackup(char** backupNames, long backupCount);
 void createBackup();
-void backupMenu();
 int backupExists();
 char* getLatestBackup();
 void restoreBackup(char* backupName);
 int isNumOrLetter(char c);
 void undoLastChanges();
 void createPath(char* pathToCreate);
-void askConfirmation();
 char* getTwoDigits(char* fileName);
 char* getMiddleDigits(char* fileName);
 char* getFourDigits(char* fileName);
@@ -55,13 +52,11 @@ int getBDORootFolder(char *buffer);
 
 void generateReferenceFile();
 int metaFileChangedSize();
-int createMenu(MenuElements menu);
-int createArrowMenu(MenuElements menu, char** subtittle, int defaultSelected);
+
 int compare(void const *a, void const *b);
 FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblocksCount);
 char* getFileBlockFullPath(FileBlock* fileBlock);
 char** getTexturesFrom(FileBlock* fileBlock, char* fileLocation, int* return_texture_count);
-int getWindowsVersion();
 int isPatched(FileBlock* fileBlock, MetaFileInfo* metaFileInfo, FILE* metaFile);
 void listPatchedFiles(int patchedFilesCount);
 void PAUSE();
