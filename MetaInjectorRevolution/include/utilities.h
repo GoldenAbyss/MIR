@@ -45,12 +45,10 @@ char* getMiddleDigits(char* fileName);
 char* getFourDigits(char* fileName);
 int contains(char* fullString, char* substring);
 char* getClassPrefix(char* fileName);
-char* getLastFolder(char* folderName);
 
 int getBDORootFolder(char *buffer, int bufferLen);
 
 int compare(void const *a, void const *b);
-char* getFileBlockFullPath(FileBlock* fileBlock);
 int isPatched(FileBlock* fileBlock, MetaFileInfo* metaFileInfo, FILE* metaFile);
 void PAUSE();
 void preventFileRecheck();

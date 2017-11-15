@@ -147,29 +147,6 @@ char* getClassPrefix(char* fileName)
     return substr(fileName,0,3);
 }
 
-char* getLastFolder(char* folderName)
-{
-    int i = strlen(folderName);
-    int start = 0;
-    int skipped = 0;
-    for ( i = strlen(folderName); i >=0; i--)
-    {
-        if (folderName[i] == '/')
-        {
-            if (skipped == 0)
-            {
-                skipped = 1;
-            }
-            else
-            {
-                start = i + 1;
-                break;
-            }
-        }
-    }
-    return substr(folderName,start,strlen(folderName) - 1);
-}
-
 int contains(char* fullString, char* substring)
 {
     if (strlen(substring) > strlen(fullString))
@@ -850,11 +827,6 @@ int getBDORootFolder(char *buffer, int bufferLen)
 	RegCloseKey(hKey);
 
 	return 1;
-}
-
-char* getFileBlockFullPath(FileBlock* fileBlock)
-{
-    return concatenate(fileBlock->folderName,fileBlock->fileName);
 }
 
 void PAUSE()
