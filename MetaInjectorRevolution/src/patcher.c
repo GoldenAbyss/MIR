@@ -181,8 +181,6 @@ int autoPatch()
 
 void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1ChosenOption)
 {
-
-
     int i = 0;
     int filesPatched = 0;
     long random_folder_num = 1;
@@ -221,10 +219,8 @@ void patchMetaFile(FileBlock* filesToPatch, int filesToPatchCount, int menu1Chos
      printf("        HASH  FOLDER_NUM FILE_NUM BYTE_IN_META_FILE| FILE_NAME");
     for (i = 0; i < filesToPatchCount; i++)
     {
-
         if(filesToPatch[i].needPatch == 1)
         {
-
             if (menu1ChosenOption == 0)
             {
                  printf("\n%.3d - %s %s  %s    (%.8ld)    | %s%s",filesPatched + 1, endian_convert((int)filesToPatch[i].hash),endian_convert((int)filesToPatch[i].folderNum),endian_convert((int)filesToPatch[i].fileNum), filesToPatch[i].metaOffset, substr(filesToPatch[i].originalPath,strlen("files_to_patch/"), strlen(filesToPatch[i].originalPath)), filesToPatch[i].fileName);

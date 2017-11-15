@@ -956,6 +956,9 @@ void createBackup()
 int backupExists()
 {
     long backupCount = 0;
+
+	// Recherche des fichiers backup dans le répertoire courant
+	printf("current path = %s\n", getCurrentPath());
     char** backups = getFilesSingleFolder(getCurrentPath(),"backup", &backupCount);
 
     if (backupCount == 1)

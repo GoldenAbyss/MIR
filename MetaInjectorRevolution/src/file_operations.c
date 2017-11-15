@@ -471,6 +471,10 @@ char* fileTok(FILE* fp, char token)
     return str;
 }
 
+/**
+* Get all files containing the filter extFilter
+* @param pathToFiles
+*/
 char** getFilesSingleFolder(char* pathToFiles, char* extFilter, long* totalFiles)
 {
     long fileCount = countFilesSingleFolder(pathToFiles,extFilter);
