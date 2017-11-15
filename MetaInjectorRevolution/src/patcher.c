@@ -25,7 +25,6 @@ void runPatcher(int menu1ChosenOption)
 
     printf("%ld files were found in files_to_patch\\\n\n", filesToPatchCount);
 
-
     if (!backupExists())
     {
         createBackup();

@@ -370,12 +370,15 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
         free(fileNamesArray[i]);
     }
     free(fileNamesArray);
+
+	// Second free : Make the system crash
+	/*
     for(i = 0; i < metaFileInfo->filesCount ; i++)
     {
         free(folderNamesArray[i]);
     }
     free(folderNamesArray);
-
+	*/
 
 
     return fileBlocks;

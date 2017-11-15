@@ -334,8 +334,8 @@ char* getLatestBackup()
 char* concatenate (char* str1, char*str2)
 {
     char* result = (char*)malloc(strlen(str1) + strlen(str2) + 1);
-    strcpy(result,str1);
-    strcat(result,str2);
+    strcpy(result,str1);	// unsafe
+    strcat(result,str2);	// unsafe
     return result;
 }
 
@@ -470,7 +470,7 @@ void listPatchedFiles(int patchedFilesCount)
     printf("\n\nSorting patched files...");
     qsort(patchedFiles,patchedFilesCount,sizeof(FileBlock),sort_by_folder_name_and_file_name);
     printf("\nDone.");
-    system("cls");
+    //system("cls");
     printMainHeader();
     printf("List of currently patched files:\n");
     for(i = 0; i < patchedFilesCount; i++)
@@ -1153,7 +1153,7 @@ int createMenu(MenuElements menu)
      // Display the menu to select the region
     while(1) // This condition makes the menu repeat itself until a valid input is entered
     {
-        system("cls"); // clears the screen
+        //system("cls"); // clears the screen
         printMainHeader();
         printf("%s\n", menu.header);
         for (i = 1; i <= menu.nOptions; i++)
@@ -1223,7 +1223,6 @@ FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblock
    return NULL;
 }
 
-// Remove me
 void PAUSE()
 {
     printf("\n\n");
@@ -1242,7 +1241,7 @@ int createArrowMenu(MenuElements menu, char** subtittle, int defaultSelected)
 
     while(1)
     {
-        system("cls");
+        //system("cls");
         printMainHeader();
         printf("%s\n\n", menu.header);
         for (i = 0; i < menu.nOptions; i++)
