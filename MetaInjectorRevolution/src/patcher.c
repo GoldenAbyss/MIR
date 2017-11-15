@@ -48,12 +48,12 @@ int runPatcher(int menu1ChosenOption)
     FileBlock* fileBlockFound = NULL;
 
 
-
+	// On force l'usage du chemin absolu
     for (j = 0; j < filesToPatchCount; j++)
     {
+		// Deux fichiers ignoré. Peut-être pour éviter d'écraser les fichiers modifié par le mode resorpless. TODO vérifier si justifié
         if ((strcmpi(filesToPatch[j].fileName,"multiplemodeldesc.xml") == 0) ||(strcmpi(filesToPatch[j].fileName,"partcombinationdesc.xml") == 0))
         {
-             // On force l'usage d'un chemin abslu
              printf("\n%d - %s%s ",filesNotFoundCount+1,filesToPatch[j].originalPath,filesToPatch[j].fileName);
 
              printColor("Skipped", YELLOW);
@@ -69,28 +69,31 @@ int runPatcher(int menu1ChosenOption)
             for (i = 0; i < metaFileInfo->fileBlocksCount; i++)
             {
                 //printf("%ld|%ld|%ld|%ld|%s|%s\n",fileBlocks[i].hash,fileBlocks[i].folderNum,fileBlocks[i].fileNum,fileBlocks[i].pazNum,fileBlocks[i].folderName,fileBlocks[i].fileName);
+
+				// Si le fileblock a le même nom de fichier on continue
                 if (strcmpi(fileBlocks[i].fileName,filesToPatch[j].fileName) == 0)
                 {
-					// On force l'usage d'un chemin abslu
-                        // Check the folder name for a match
+					printf("\nfilesToPatch[j].originalPath = %s\n", filesToPatch[j].originalPath);
+					printf("fileBlocks[i].folderName = %s\n", fileBlocks[i].folderName);
+
+					// Ensuite on vérifie qu'ils sont dans le même dossier
                     if (strcmpi(filesToPatch[j].originalPath,fileBlocks[i].folderName) == 0)
                     {
-                            fileBlockFound = &fileBlocks[i];
-                            break; // Prevents it to keep looking the other file blocks
+                        fileBlockFound = &fileBlocks[i];
+                        break; // Prevents it to keep looking the other file blocks
                     }
-                    
                 }
             }
+
+			printf("\n%d - %s%s ", filesNotFoundCount + 1, filesToPatch[j].originalPath, filesToPatch[j].fileName);
 
             if (fileBlockFound != NULL) // If the name was found
             {
                 addToFilesToPatch(fileBlockFound, &filesToPatch[j]);
-                //printColor("Found!", GREEN);
+                printColor("Found!", GREEN);
             }
             else
             {
-                printf("\n%d - %s%s ",filesNotFoundCount+1,filesToPatch[j].originalPath,filesToPatch[j].fileName);
-
                 printColor("Not Found.", RED);
                 filesNotPatchedCount++;
                 filesNotFoundCount++;
