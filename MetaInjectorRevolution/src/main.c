@@ -25,6 +25,11 @@ int main(int argc, char **argv)
     int menu0ChosenOption = -1;
     int menu1ChosenOption = -1;
     isWindows10 = (getWindowsVersion() == 10);
+
+	printf("-----------------------------------------------------------\n");
+	printf("- Meta Injector Revolution alpha 0.1					  -\n");
+	printf("- based on BlackFireBR Meta Injector Reloaded 2.0e        -\n");
+	printf("-----------------------------------------------------------\n\n");
     
 	if (!fileExists("pad00000.meta"))
 	{
