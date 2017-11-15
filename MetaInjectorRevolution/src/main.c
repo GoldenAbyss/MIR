@@ -40,29 +40,32 @@ int main(int argc, char **argv)
 		getch();
 		return 1;
 	}
-	
+
 	if (argc <= 1)
 	{
-		// If there is not argument, we auto patch using the content of patch_ressource
+		printf("Not enought arguments.\n");
+		printf("Usage: mir.exe <command>\n");
+		printf("\t-autopatch : Path files in topatch directory without asking for confirmations\n");
+		printf("\t-restore : Remove last changes\n");
+		printf("\tmod.zip : Install a mod\n");
+		getch();
+		return 1;
+	}
 
-		/*
-		printf("\n\nWhat do you want to do?\n");
-        printf("1 - Run Injector\n");
-        printf("2 - Undo last changes\n");
-        printf("3 - Restore Backup\n");
-        printf("4 - List patched files\n");
-        printf("5 - Prevent File Re-check\n");
-        printf("0 - Exit\n");
-		*/
-		return autoPatch(1);	// 1= Run Injector
+	if (!strcmpi(argv[1], "-autopatch"))
+	{
+		return autoPatch();
+	}
+	else if (!strcmpi(argv[1], "-restore"))
+	{
+		// TODO : Restaurer le fichier pad a avant le patch
 	}
 	else
-	{
-		printf("Mod file: %s\n", argv[1]);
-		printf("Not yet implemented.\n");
+	{ 
+		printf("Installing mod file %s\n", argv[1]);
+		// TODO: Check for zip extensions
+		printf("Not yet implemented\n");
 	}
-	// Other argument : restore
-	// Will put back the original pad00000.meta
 
     return 0;
 }
