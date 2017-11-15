@@ -25,6 +25,9 @@ void charReplace(char* str,char token,char replace);
 char* substr(char* str,int start, int length);
 char** getBackupList(long* backupCount);
 
+void fetchPadFile();
+void pushPadFile();
+
 int createBackup();
 void restoreBackup();
 

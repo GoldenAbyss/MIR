@@ -272,7 +272,8 @@ int backupExists()
 }
 
 /**
- * Erase the current pad00000.meta and replaced it by the backup file
+ * Erase the current pad00000.meta and replace it by the backup file
+ * The param has been remove because there is only one backup now
  */
 void restoreBackup()
 {
@@ -313,7 +314,6 @@ int getBDORootFolder(char *buffer, int bufferLen)
 		{
 			strcat(lszValue, "\\");
 			strncpy(buffer, lszValue, bufferLen); //strlen(lszValue));
-			printf("debug: %s\n", buffer);
 
 			RegCloseKey(hKey);
 			return 0;
@@ -325,6 +325,14 @@ int getBDORootFolder(char *buffer, int bufferLen)
 	RegCloseKey(hKey);
 
 	return 1;
+}
+
+/**
+ * If the pad file 
+ */
+void fetchPadFile()
+{
+
 }
 
 void PAUSE()
