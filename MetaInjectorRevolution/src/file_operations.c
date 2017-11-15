@@ -545,7 +545,6 @@ FileBlock* getAllFiles(char* pathToFiles, char* extFilter, long* filesCount)
     // This is a recursive function that goes through each file or folder, starting in "startingPath", and if it's a file, it adds it to the "fileNames" array, if it's a folder, it goes inside this folder and does the same thing
     goInside(pathToFiles,&fileNames,extFilter,&currentFile);
 
-
     return fileNames;
 }
 
@@ -630,8 +629,18 @@ void goInside(char* startingPath, FileBlock** fileNames, char* extFilter, long* 
                     strcpy((*fileNames)[(*currentFile)].fileName,fileName); // Copies the file name to that string
                     (*fileNames)[(*currentFile)].fileName[strlen(fileName)] = '\0';
 
-					// TODO Remove constant expression "files_to_patch" awful.
-                    (*fileNames)[(*currentFile)].originalPath = substr(startingPath,strlen("files_to_patch\\"), strlen(startingPath));
+					// Ce qu'il faut faire c'est supprimer le premier répertoire. Plutôt que d'utiliser le nom du fichier,
+					// on va simplement rechercher le premier \\ dans le code et faire un substring à partir de lui
+
+					char *c = strchr(startingPath, (char)'\\')+1;
+					if (c == NULL)
+					{
+						// Should not be possible 
+						exit(1);
+					}
+
+					(*fileNames)[(*currentFile)].originalPath = malloc((sizeof(char) * MAX_PATH)+1); // freed in autoPatch(const char*)
+					strncpy((*fileNames)[(*currentFile)].originalPath, c, MAX_PATH);
                     charReplace((*fileNames)[(*currentFile)].originalPath,'\\','/');
 
                     (*currentFile)++;
@@ -641,7 +650,7 @@ void goInside(char* startingPath, FileBlock** fileNames, char* extFilter, long* 
             else
             {
                 strcat(completePath,"\\");
-                goInside(completePath,fileNames,extFilter,currentFile);
+				goInside(completePath, fileNames, extFilter, currentFile);
                 free(completePath);
             }
         }

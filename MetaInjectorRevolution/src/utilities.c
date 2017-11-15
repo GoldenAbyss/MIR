@@ -126,6 +126,9 @@ void charReplace(char* str,char token,char replace)
     }
 }
 
+/**
+ * Create a substring
+ */
 char* substr(char* str,int start, int end)
 {
     if (end < start)
@@ -137,6 +140,7 @@ char* substr(char* str,int start, int end)
     {
         return "";
     }
+	// Free no in the same function. Danger !
     char* sub = (char*) malloc((end - start) + 1);
     int j = 0;
     int i = 0;
