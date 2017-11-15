@@ -10,8 +10,9 @@
 int main(int argc, char **argv)
 {
 	printf("-----------------------------------------------------------\n");
-	printf("- Meta Injector Revolution alpha 0.1					  -\n");
-	printf("- based on BlackFireBR Meta Injector Reloaded 2.0e        -\n");
+	printf("-- Meta Injector Revolution alpha 0.1                    --\n");
+	printf("-- based on Meta Injector Reloaded 2.0e                  --\n");
+	printf("-- Thanks to BlackFireBR                                 --\n");
 	printf("-----------------------------------------------------------\n\n");
     
 	if (!fileExists("pad00000.meta"))
