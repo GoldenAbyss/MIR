@@ -23,6 +23,7 @@ int autoPatch(const char *patchDir)
     int filesSkippedCount = 0;
     int filesNotFoundCount = 0;
 	char padFilePath[MAX_PATH];
+	char latestBackupPath[MAX_PATH];
 
     int i = 0, j = 0;
 
@@ -41,7 +42,9 @@ int autoPatch(const char *patchDir)
 
     printf("%ld files to be patched...\n\n", filesToPatchCount);
 
-    metaFileInfo = getMetaFileInfo(getLatestBackup());
+	getLatestBackup(latestBackupPath, sizeof(latestBackupPath));
+    metaFileInfo = getMetaFileInfo(latestBackupPath);
+
     fileBlocks = fillFileBlocks(metaFileInfo);
 
     /* for (i = 0; i < metaFileInfo->fileBlocksCount; i++)

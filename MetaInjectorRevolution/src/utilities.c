@@ -67,18 +67,18 @@ void createPath(char* pathToCreate)
     }
 }
 
-char* getLatestBackup()
+void getLatestBackup(char *buffer, const int len)
 {
 	char padFilePath[MAX_PATH];
-    long backupCount = 0;
-    char** backups = getBackupList(&backupCount);
 
-    if (backupCount == 0)
-    {
-		getPadFilePath(padFilePath, sizeof(padFilePath));
-        return padFilePath;
+	if (fileExists(BACKUP_FILENAME))
+	{
+		strncpy(buffer, BACKUP_FILENAME, len);
+	}
+	else
+	{
+		getPadFilePath(buffer, len);
     }
-    return backups[backupCount - 1];
 }
 
 // Merges 2 strings into 1
@@ -302,6 +302,7 @@ void PAUSE()
 void preventFileRecheck()
 {
 	char root[MAX_PATH];
+	char latestBackupPath[MAX_PATH];
 
     printf("\nPreventing File Check...\n");
 
@@ -311,7 +312,9 @@ void preventFileRecheck()
     char* versionDatPath = concatenate(root,"version.dat");
 
 
-    FILE* metaFile = openFile(getLatestBackup(),"rb");
+	getLatestBackup(latestBackupPath, sizeof(latestBackupPath));
+    FILE* metaFile = openFile(latestBackupPath,"rb");
+
     FILE* versionDatFile = fopen(versionDatPath,"rb");
 
 

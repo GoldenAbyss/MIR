@@ -30,7 +30,7 @@ int getPadFilePath(char *, const int);
 int createBackup();
 void restoreBackup();
 
-char* getLatestBackup();
+void getLatestBackup(char *, const int);
 void createPath(char* pathToCreate);
 
 int getBDORootFolder(char *buffer, const int len);

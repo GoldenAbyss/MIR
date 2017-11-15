@@ -38,12 +38,16 @@ FileBlock* fillFileBlocks(MetaFileInfo* metaFileInfo)
     long hash_offset_start = 0;
     int hash_found = 0;
     int i = 0;
+	char latestBackupPath[MAX_PATH];
 
     fileBlocks = (FileBlock*)calloc(metaFileInfo->filesCount + 1, sizeof(FileBlock));
     metaFileInfo->fileBlocksCount = 0;
 
+
+	getLatestBackup(latestBackupPath, sizeof(latestBackupPath));
+
 	// TODO Vérifier pourquoi cette fonction a besoin d'un backup
-    FILE* metaFile = openFile(getLatestBackup(),"rb");
+    FILE* metaFile = openFile(latestBackupPath,"rb");
     //fseek(metaFile,metaFileInfo->originalFileBlocksStart,SEEK_SET); // Go to where the file blocks are supposed to start
 
 
