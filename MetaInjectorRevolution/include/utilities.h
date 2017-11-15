@@ -44,7 +44,6 @@ char* getTwoDigits(char* fileName);
 char* getMiddleDigits(char* fileName);
 char* getFourDigits(char* fileName);
 int contains(char* fullString, char* substring);
-char* getClassPrefix(char* fileName);
 
 int getBDORootFolder(char *buffer, int bufferLen);
 

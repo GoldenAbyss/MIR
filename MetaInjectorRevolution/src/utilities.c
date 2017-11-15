@@ -142,11 +142,6 @@ char* getMiddleDigits(char* fileName)
     return middle;
 }
 
-char* getClassPrefix(char* fileName)
-{
-    return substr(fileName,0,3);
-}
-
 int contains(char* fullString, char* substring)
 {
     if (strlen(substring) > strlen(fullString))
