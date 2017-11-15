@@ -484,6 +484,10 @@ int backupExists()
     return 0;
 }
 
+/**
+ * Erase the current pad00000.meta and replaced it by the backup file
+ * @param backupName Name of the backup file that will replaced the pad file
+ */
 void restoreBackup(char* backupName)
 {
 	char modFilePath[MAX_PATH];
