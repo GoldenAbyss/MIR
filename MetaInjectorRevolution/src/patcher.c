@@ -104,7 +104,6 @@ int autoPatch()
     else if (filesToPatchCount >= filesNotFoundCount)
 	{
 		printf("\nPatching failed...\n");
-		getch();
 		return 1;
 	}
 
@@ -158,7 +157,6 @@ int autoPatch()
     }
 
     printf("\n\n");
-	getch();
 
     // END INSTALL
     for(i = 0; i < metaFileInfo->fileBlocksCount; i++)
