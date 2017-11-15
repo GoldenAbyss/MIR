@@ -11,6 +11,7 @@
 #include "../include/meta_explorer.h"
 
 #define BACKUP_FILENAME "pad00000.meta.backup"
+#define META_FILE_SUBDIR "Paz\\pad00000.meta"
 #define TEMP_DIR "temp\\"
 #define BDO_REGISTRY_KEY "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{C1F96C92-7B8C-485F-A9CD-37A0708A2A60}"
 #define BDO_DEFAULT_ROOT_DIRECTORY "C:\\Program Files (x86)\\Black Desert Online\\"
@@ -23,10 +24,12 @@ void printColor(char* stringToPrint, Color COLOR);
 void charReplace(char* str,char token,char replace);
 char* substr(char* str,int start, int length);
 char** getBackupList(long* backupCount);
-void createBackup();
+
+int createBackup();
+void restoreBackup();
+
 int backupExists();
 char* getLatestBackup();
-void restoreBackup(char* backupName);
 void undoLastChanges();
 void createPath(char* pathToCreate);
 

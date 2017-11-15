@@ -219,30 +219,27 @@ char** getBackupList(long* backupCount)
     return getFilesSingleFolder(getCurrentPath(),"backup",backupCount);
 }
 
-void createBackup()
+int createBackup()
 {
 	char cmd[256];
 	char modFilePath[MAX_PATH];
+	char root[MAX_PATH];
+
+	getBDORootFolder(root, sizeof(root));
 
 	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
     remove(modFilePath);
 
 	// TODO Eviter d'utiliser une commande système pour simplement copier un fichier
 	// Risque de blocage dans des cas particulier
-	sprintf(cmd,"copy /y pad00000.meta %s", BACKUP_FILENAME);
+	sprintf(cmd,"copy /y \"%s%s\" %s", root, META_FILE_SUBDIR, BACKUP_FILENAME);
     system(cmd);
 
     if (fileExists(BACKUP_FILENAME))
     {
-        printf("\nA new backup was created: %s\n", BACKUP_FILENAME);
+		return 0;
     }
-    else
-    {
-        printf("\nCould not create a backup\n");
-        printf("Try running the program as administrator\n");
-        printf("\nThe program will try to ignore this file, but it will most likely, not work properly.");
-        PAUSE();
-    }
+	return 1;
 }
 
 int backupExists()
@@ -264,6 +261,8 @@ int backupExists()
         {
             fclose(metaFile);
             fclose(backupFile);
+			// Si le meta file actuel correspond à l'un des backup, cela veut dire qu'on est bon
+			// Si par contre le fichier actuel n'a aucun backup, on le créé
             return 1;
         }
         fclose(backupFile);
@@ -274,15 +273,19 @@ int backupExists()
 
 /**
  * Erase the current pad00000.meta and replaced it by the backup file
- * @param backupName Name of the backup file that will replaced the pad file
  */
-void restoreBackup(char* backupName)
+void restoreBackup()
 {
 	char modFilePath[MAX_PATH];
+	char root[MAX_PATH];
     char command[2048];
-    sprintf(command,"xcopy /y \"%s\" pad00000.meta",backupName);
+
+	getBDORootFolder(root, sizeof(root));
+
+    sprintf(command,"xcopy /y \"%s\" \"%s%s\"", BACKUP_FILENAME, root, META_FILE_SUBDIR);
     system(command);
-    preventFileRecheck();
+
+    //preventFileRecheck();
 
 	sprintf(modFilePath, "%s\\latest_modifications_meta_injector.bin", TEMP_DIR);
     remove(modFilePath);

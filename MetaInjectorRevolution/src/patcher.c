@@ -32,11 +32,6 @@ int autoPatch(const char *patchDir)
 
     printf("%ld files to be patched...\n\n", filesToPatchCount);
 
-    if (!backupExists())
-    {
-        createBackup();
-    }
-
     metaFileInfo = getMetaFileInfo(getLatestBackup());
     fileBlocks = fillFileBlocks(metaFileInfo);
 

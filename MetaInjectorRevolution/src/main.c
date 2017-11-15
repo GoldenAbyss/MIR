@@ -32,6 +32,7 @@ int main(int argc, char **argv)
 		printf("Not enought arguments.\n");
 		printf("Usage: mir.exe <command>\n");
 		printf("\t-autopatch : Path files in topatch directory without asking for confirmations\n");
+		printf("\t-backup : Create a backup for the pad00000.meta file\n");
 		printf("\t-restore : Remove last changes\n");
 		printf("\tmod.zip : Install a mod\n");
 #ifdef _DEBUG
@@ -50,7 +51,15 @@ int main(int argc, char **argv)
 	}
 	else if (!strcmpi(argv[1], "-restore"))
 	{
-		// TODO : Restaurer le fichier pad a avant le patch
+		restoreBackup();
+	}
+	else if (!strcmp(argv[1], "-backup"))
+	{
+		printf("Performing a clean backup");
+		if (createBackup())
+		{
+			printf("Error while creating backup file...\n");
+		}
 	}
 	else
 	{ 
