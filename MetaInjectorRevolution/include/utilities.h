@@ -40,9 +40,6 @@ void restoreBackup(char* backupName);
 int isNumOrLetter(char c);
 void undoLastChanges();
 void createPath(char* pathToCreate);
-char* getTwoDigits(char* fileName);
-char* getMiddleDigits(char* fileName);
-char* getFourDigits(char* fileName);
 
 int getBDORootFolder(char *buffer, int bufferLen);
 

@@ -122,42 +122,6 @@ char* endian_convert(int num)
     return little_end;
 }
 
-char* getTwoDigits(char* fileName)
-{
-    int start = indexOf('_',fileName,0) + 1;
-    int end = indexOf('_',fileName,1);
-
-    char* twoDigits = substr(fileName,start,end);
-
-    return twoDigits;
-}
-
-char* getMiddleDigits(char* fileName)
-{
-    int  start = indexOf('_',fileName,1) + 1;
-    int end = indexOf('_',fileName,2);
-
-    char* middle = substr(fileName,start,end);
-
-    return middle;
-}
-
-char* getFourDigits(char* fileName)
-{
-    int start = indexOf('_',fileName,2) + 1;
-    int end = indexOf('_',fileName,3);
-    int dot = indexOf('.',fileName,0);
-
-    if (dot < end)
-    {
-        end = dot;
-    }
-
-    char* fourDigits = substr(fileName,start,end);
-
-    return fourDigits;
-}
-
 void createPath(char* pathToCreate)
 {
     charReplace(pathToCreate,'/','\\');
