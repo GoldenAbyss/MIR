@@ -918,31 +918,19 @@ int selectBackup(char** backupNames, long backupCount)
     return backupSelected;
 }
 
-
-
 void createBackup()
 {
-    int backupNameLen = strlen("pad00000[YYYY-MM-DD].meta.backup");
-    char* backupName = (char*)malloc(backupNameLen + 1);
-
-
+	char cmd[256];
     remove("patcher_resources/latest_modifications_meta_injector.bin");
 
-    time_t now;
-    time(&now);
-
-    struct tm* now_tm;
-    now_tm = localtime(&now);
-
-    strftime (backupName, backupNameLen + 1, "pad00000[%Y-%m-%d].meta.backup", now_tm);
-
-    char* cmd = (char*) malloc(strlen("copy pad00000.meta pad00000[YYYY-MM-DD].meta.backup") + 1);
-    sprintf(cmd,"copy pad00000.meta %s", backupName);
+	// TODO Eviter d'utiliser une commande système pour simplement copier un fichier
+	// Risque de blocage dans des cas particulier
+	sprintf(cmd,"copy /y pad00000.meta %s", BACKUP_FILENAME);
     system(cmd);
 
-    if (fileExists(backupName))
+    if (fileExists(BACKUP_FILENAME))
     {
-        printf("\nA new backup was created: %s\n",backupName);
+        printf("\nA new backup was created: %s\n", BACKUP_FILENAME);
     }
     else
     {
@@ -960,18 +948,10 @@ int backupExists()
 	// Donne un listing de tous les fichiers finissant par backup
     char** backups = getFilesSingleFolder(getCurrentPath(),"backup", &backupCount);
 
-    if (backupCount == 1)
-    {
-        printf("%ld backup was found\n", backupCount);
-    }
-    else
-    {
-        printf("%ld backups were found\n", backupCount);
-    }
-
     FILE* backupFile = NULL;
     FILE* metaFile = openFile("pad00000.meta","rb");
 
+	// TODO Vérification par checksum plutôt que par taille de fichier
     int i = 0;
     for(i = 0; i < backupCount; i++)
     {
@@ -995,7 +975,6 @@ void restoreBackup(char* backupName)
     system(command);
     preventFileRecheck();
     remove("patcher_resources\\latest_modifications_meta_injector.bin");
-
 }
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -1011,49 +990,6 @@ char* bdoRootFolder()
 {
 	// TODO Récupéré le chemin vers BDO à partir du registre ou déduire un répertoire par défaut
     return (oneLevelDown(getCurrentPath()));
-}
-
-
-// Inutilisé.
-void generateReferenceFile()
-{
-    printf("Generating reference file (it takes a while)...");
-    char command[2048] = "";
-    char* metaFileName = getLatestBackup();
-    if (strlen(metaFileName) == 0)
-    {
-        metaFileName = (char*) malloc(strlen("pad00000.meta") + 1);
-        strcpy(metaFileName,"pad00000.meta");
-    }
-
-    sprintf(command, "cd patcher_resources & quickbms.exe 2>NULL 1>reference_file.txt blackdesert_file_lister.bms \"%s", concatenate(getCurrentPath(),metaFileName));
-    system(command);
-    remove("NULL");
-
-    long refFileSize = getFileSizeByName("patcher_resources/reference_file.txt");
-
-    if (refFileSize < 20000000)
-    {
-        sprintf(command, "cd patcher_resources & quickbms.exe blackdesert_file_lister.bms \"%s", concatenate(getCurrentPath(),metaFileName));
-        system(command);
-        printf("\n\nFailed to generate reference_file_textures.txt, the reason is shown above\n");
-        if (refFileSize != 0)
-        {
-            printf("  The program can try using the created reference_file.txt instead,\n");
-            printf("  But it will not find a lot of files\n");
-            askConfirmation();
-        }
-        else
-        {
-            printf("\nThe program cannot continue... Exiting");
-            system("PAUSE");
-            exit(1);
-        }
-    }
-    else
-    {
-        printf("\nDone.\n\n");
-    }
 }
 
 int metaFileChangedSize()

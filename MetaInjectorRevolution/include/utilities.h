@@ -10,6 +10,7 @@
 #include "../include/file_operations.h"
 #include "../include/meta_explorer.h"
 
+#define BACKUP_FILENAME "pad00000.meta.backup"
 
 int compare_meta_offset(void const *a, void const *b) ;
 int sort_by_folder_name_and_file_name(void const *a, void const *b);
