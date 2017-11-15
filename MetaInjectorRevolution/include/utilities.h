@@ -29,7 +29,6 @@ int alreadyInStringArray(char* fileName,char** stringArray, int arrraySize);
 long locateIntInMemory(int intToLocate,MemFileInt* arrayInMemory, MetaFileInfo* metaInfo);
 void charReplace(char* str,char token,char replace);
 char* substr(char* str,int start, int length);
-void printFileBlock(FileBlock fileBlock);
 int indexOf(char token, char* str, int skips);
 char** getBackupList(long* backupCount);
 int selectBackup(char** backupNames, long backupCount);
@@ -48,9 +47,8 @@ char* getClassPrefix(char* fileName);
 char* getLastFolder(char* folderName);
 
 void createLogFile();
-int getBDORootFolder(char *buffer);
+int getBDORootFolder(char *buffer, int bufferLen);
 
-void generateReferenceFile();
 int metaFileChangedSize();
 
 int compare(void const *a, void const *b);
@@ -58,7 +56,6 @@ FileBlock* binarySearchFileBlock(char* key, FileBlock* fileBlocks, int fileblock
 char* getFileBlockFullPath(FileBlock* fileBlock);
 char** getTexturesFrom(FileBlock* fileBlock, char* fileLocation, int* return_texture_count);
 int isPatched(FileBlock* fileBlock, MetaFileInfo* metaFileInfo, FILE* metaFile);
-void listPatchedFiles(int patchedFilesCount);
 void PAUSE();
 void preventFileRecheck();
 #endif // UTILITIES_H

@@ -8,7 +8,9 @@
  ************************************************************************/
 /**
  * Patch the files automatically
- * @return 1 If the patching has failed, otherwise 0
+ * @return 0 All files patched successfuly
+ * @return 1 If the patching has failed
+ * @return 2 Some file could not be patched
  */
 int autoPatch()
 {
@@ -22,12 +24,14 @@ int autoPatch()
 
     int i = 0, j = 0;
 
-     printf("\nCounting files...\n\n");
+	int returnCode = 0;
+
+    // printf("\nCounting files...\n\n");
     // Counts how many files there is in the "files_to_patch" folder assigns to filesToPatchCount,
     // and get all the file names in folders and sub folders and returns them as an array of strings
     filesToPatch = getAllFiles("files_to_patch\\","*",&filesToPatchCount);
 
-    printf("%ld files were found in files_to_patch\\\n\n", filesToPatchCount);
+    printf("%ld files to be patched...\n\n", filesToPatchCount);
 
     if (!backupExists())
     {
@@ -45,7 +49,6 @@ int autoPatch()
     printf("\nSearching for files in the meta file...");
 
     FileBlock* fileBlockFound = NULL;
-
 
 	// On force l'usage du chemin absolu
     for (j = 0; j < filesToPatchCount; j++)
@@ -96,42 +99,46 @@ int autoPatch()
             }
         }
     }
-    if (filesNotFoundCount == 0)
-    {
-        printf("\nDone.");
-    }
-    else if (filesToPatchCount >= filesNotFoundCount)
+
+	if (filesNotFoundCount >= filesToPatchCount)
 	{
-		printf("\nPatching failed...\n");
-		return 1;
+		// Cas dans lequel aucun fichier n'est trouvé
+		printf("\nCould not apply patch... FAILURE\n");
+		returnCode = 1;
+	}
+	if (filesNotFoundCount >= 1)
+	{
+		// Si l'un des fichiers n'a pas pu être patché
+		// pour le moment on continue quand même l'opération
+		// mais on indique qu'elle ne s'est pas passé correctement
+
+		printf("\nSome files could not be patched...\n");
+		returnCode = 2;
 	}
 
 
-
-    /// COPYING FILES
+	/// COPYING FILES
 	// On copie les fichiers qui vont être patché.
 	// Seul les fichiers patché sont copié car contenu dans *filesToPatch
-     printf("\n\nCopying files from \"files_to_patch\\\" to their right locations...\n");
-     copyFilesBack(filesToPatch, filesToPatchCount);
+	printf("\n\nCopying files to BDO root directory...\n");
+	copyFilesBack(filesToPatch, filesToPatchCount);
 
+	/// PATCHING META FILE
+	printf("\nPatching meta file...\n");
+	patchMetaFile(filesToPatch, filesToPatchCount, 1);
 
+	printf("\n\nDone.\n");
 
-    /// PATCHING META FILE
-    patchMetaFile(filesToPatch, filesToPatchCount, 1);
-
-
-    printf("\n\nFinished!\n");
-
-    filesNotPatchedCount = 0;
-    for(i = 0; i < filesToPatchCount; i++)
-    {
-        if(filesToPatch[i].needPatch == 0)
-        {
-            filesNotPatchedCount++;
-        }
-    }
-
-    if(filesNotPatchedCount > 0)
+	filesNotPatchedCount = 0;
+	for (i = 0; i < filesToPatchCount; i++)
+	{
+		if (filesToPatch[i].needPatch == 0)
+		{
+			filesNotPatchedCount++;
+		}
+	}
+	
+	if(filesNotPatchedCount > 0)
     {
         printColor("\nThose files have failed to patch:\n", RED);
         for(i = 0; i < filesToPatchCount; i++)
@@ -145,19 +152,11 @@ int autoPatch()
     }
 
 
-
     printColor("\n\n-------------- Overall Results --------------\n", YELLOW);
-    printf("Patched: \033[32;1m%ld\033[0m Not Patched: \033[31;1m%d\033[0m Skipped: \033[33;1m%d\033[0m",filesToPatchCount - filesNotPatchedCount - filesSkippedCount, filesNotPatchedCount, filesSkippedCount);
+    printf("Patched: \033[32;1m%ld\033[0m Not Patched: \033[31;1m%d\033[0m Skipped: \033[33;1m%d\033[0m\n",
+		filesToPatchCount - filesNotPatchedCount - filesSkippedCount, filesNotPatchedCount, filesSkippedCount);
 
-
-    if (filesNotPatchedCount == 0)
-    {
-        printColor("\n\n\tAll files have been patched successfully!", GREEN);
-    }
-
-    printf("\n\n");
-
-    // END INSTALL
+	// Free memory
     for(i = 0; i < metaFileInfo->fileBlocksCount; i++)
     {
         free(fileBlocks[i].fileName);
@@ -173,8 +172,8 @@ int autoPatch()
     }
     free(filesToPatch);
 
-	// Operation successful
-	return 0;
+
+	return returnCode;
 }
 
 
